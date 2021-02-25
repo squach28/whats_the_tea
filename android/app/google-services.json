@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "705492633659",
+    "project_id": "what-s-the-tea",
+    "storage_bucket": "what-s-the-tea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705492633659:android:1a3702122aeb5989ae741e",
+        "android_client_info": {
+          "package_name": "com.squach.whats_the_tea"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705492633659-tvqk1rpd9g0qbdgdq7pn42ujvb0v5j7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6chMzpjvypxyP7KGKB3hlKQu1cMF4Jh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705492633659-tvqk1rpd9g0qbdgdq7pn42ujvb0v5j7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
