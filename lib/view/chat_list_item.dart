@@ -20,7 +20,7 @@ class ChatListItemState extends State<ChatListItem> {
           }));
         },
         child: Card(
-          //color: Colors.pink,
+          color: const Color(0xfffdcece),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
