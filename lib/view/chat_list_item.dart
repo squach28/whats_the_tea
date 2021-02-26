@@ -11,6 +11,9 @@ class ChatListItem extends StatefulWidget {
 }
 
 class ChatListItemState extends State<ChatListItem> {
+
+  String channelID;
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

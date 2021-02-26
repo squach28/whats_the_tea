@@ -35,5 +35,7 @@ class UserService {
   }
 
   // send friend request
-  Future<void> sendFriendRequest(User sender, User recipient) {}
+  Future<void> sendFriendRequest(User sender, User recipient) {
+    
+  }
 }

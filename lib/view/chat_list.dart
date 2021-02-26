@@ -18,6 +18,8 @@ class ChatListPage extends StatefulWidget {
 class ChatListPageState extends State<ChatListPage> {
   final AuthService authService = AuthService();
 
+  final items = List<String>.generate(100, (i) => "Item $i");
+
   // display chats
   // widget for user chat
 
@@ -26,6 +28,7 @@ class ChatListPageState extends State<ChatListPage> {
     return Scaffold(
       backgroundColor: Color(0xffbcfdc9),
       body: SafeArea(
+          minimum: EdgeInsets.only(left: 5.0, right: 5.0),
           child: Padding(
               padding: EdgeInsets.only(left: 5.0, right: 5.0),
               child: SingleChildScrollView(
@@ -53,39 +56,13 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        Text('hello world'),
-                        TextButton(
-                            onPressed: () {
-                              ChatService chatService = ChatService();
-                              Future<DocumentReference> chat = chatService
-                                  .sendMessage('test1', 'test2', 'lmao xdddd');
-                              chat.then((DocumentReference value) =>
-                                  print(value.path));
-                            },
-                            child: Text('Chat Test')),
-                        TextButton(
-                          onPressed: () {
-                            authService.signOut();
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        SignInPage()));
-                          },
-                          child: Text('Sign Out'),
-                        )
-                      ],
-                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 100,
+                        itemBuilder: (context, index) {
+                          return ChatListItem();
+                        }),
                   ],
                 ),
               ))),
