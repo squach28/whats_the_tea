@@ -34,7 +34,7 @@ class ChatService {
     CollectionReference users = firestore.collection('users');
 
     for (User participant in participants) {
-      await users.where('uID', isEqualTo: participant.uID).get().then((value) {
+      await users.where('uid', isEqualTo: participant.uid).get().then((value) {
         for (QueryDocumentSnapshot queries in value.docs) {
           queries.reference
               .update({'channels': FieldValue.arrayUnion(channelIDAsList)});
