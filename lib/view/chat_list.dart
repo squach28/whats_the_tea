@@ -4,35 +4,22 @@ import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/service/auth_service.dart';
 import 'package:whats_the_tea/view/sign_in.dart';
-import 'package:whats_the_tea/view/start_chat.dart';
 import 'package:whats_the_tea/view/settings.dart';
 
-class ChatList extends StatefulWidget {
-  ChatList({
+class ChatListPage extends StatefulWidget {
+  ChatListPage({
     Key key,
   }) : super(key: key);
 
   @override
-  ChatListState createState() => ChatListState();
+  ChatListPageState createState() => ChatListPageState();
 }
 
-class ChatListState extends State<ChatList> {
+class ChatListPageState extends State<ChatListPage> {
   final AuthService authService = AuthService();
-  final List<Widget> children = [
-    ChatList(),
-    SettingsPage()
-  ];
-  int currentIndex = 0;
 
   // display chats
   // widget for user chat
-
-  void onTabTapped(int index) {
-    print('tab tapped!');
-    setState(() {
-      currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

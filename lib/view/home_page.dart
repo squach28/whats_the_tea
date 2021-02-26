@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final AuthService authService = AuthService();
   final List<Widget> children = [
-    ChatList(),
+    ChatListPage(),
     SettingsPage()
   ];
   int currentIndex = 0;
@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
           ),
           onPressed: () {
             print('pressed!');
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => StartChat()));
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => StartChatPage()));
           }),
     );
   }

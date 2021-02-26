@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/view/chat_list_item.dart';
 
-class StartChat extends StatefulWidget {
+class StartChatPage extends StatefulWidget {
   @override 
-  StartChatState createState() => StartChatState();
+  StartChatPageState createState() => StartChatPageState();
 }
 
-class StartChatState extends State<StartChat> {
+class StartChatPageState extends State<StartChatPage> {
   @override 
   Widget build(BuildContext context) {
     return Scaffold(

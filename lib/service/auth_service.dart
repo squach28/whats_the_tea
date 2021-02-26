@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:whats_the_tea/model/sign_in_result.dart';
+import 'package:whats_the_tea/model/sign_up_result.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/model/user.dart' as m;
 
@@ -10,18 +12,21 @@ class AuthService {
   final DatabaseController databaseController = DatabaseController();
 
   // signs the user in with email and password
-  Future<void> signIn(String email, String password) async {
+  Future<SignInResult> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      return SignInResult.SUCCESS;
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'user-not-found') {
         print('no user found for that email');
+        return SignInResult.USER_NOT_FOUND;
       } else if (e.code == 'wrong-password') {
         print('wrong password provided for the user');
+        return SignInResult.WRONG_PASSWORD;
       } else {
         print('error: ' + e.code);
       }
@@ -31,7 +36,7 @@ class AuthService {
   }
 
   // signs the user up for an account with email and password
-  Future<void> signUp(
+  Future<SignUpResult> signUp(
       String email, String password, String firstName, String lastName) async {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
@@ -52,11 +57,15 @@ class AuthService {
       databaseController.createUserProfile(user);
 
       print('successfully created account!');
+
+      return SignUpResult.SUCCESS;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('the password is too weak');
+        return SignUpResult.WEAK_PASSWORD;
       } else if (e.code == 'email-already-in-use') {
         print('email is already in use');
+        return SignUpResult.EMAIL_IN_USE;
       }
     }
   }

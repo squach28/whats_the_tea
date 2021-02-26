@@ -79,6 +79,44 @@ class _SignInPageState extends State<SignInPage> {
             });
         break;
 
+      case SignInResult.USER_NOT_FOUND:
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('User not Found'),
+                content: Text('A user with that email does not exist'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+        break;
+
+      case SignInResult.WRONG_PASSWORD:
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Wrong Password'),
+                content: Text('The wrong password was entered'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+        break;
+
       default:
         showDialog(
             context: context,
@@ -97,6 +135,26 @@ class _SignInPageState extends State<SignInPage> {
               );
             });
         break;
+    }
+  }
+
+  Future<bool> signIn() async {
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
+
+    SignInResult signInResult = validateFields(email, password);
+
+    if (signInResult != SignInResult.SUCCESS) {
+      showAlert(signInResult);
+      return false;
+    } else {
+      SignInResult signInResult = await auth.signIn(email, password);
+      if (signInResult != SignInResult.SUCCESS) {
+        showAlert(signInResult);
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
@@ -201,17 +259,9 @@ class _SignInPageState extends State<SignInPage> {
                             RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(25.0))),
                       ),
-                      onPressed: () {
-                        final String email = emailController.text.trim();
-                        final String password = passwordController.text.trim();
-
-                        SignInResult signInResult =
-                            validateFields(email, password);
-
-                        if (signInResult != SignInResult.SUCCESS) {
-                          showAlert(signInResult);
-                        } else {
-                          auth.signIn(email, password);
+                      onPressed: () async {
+                        bool signInSuccess = await signIn();
+                        if (signInSuccess) {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

@@ -131,6 +131,25 @@ class SignUpPageState extends State<SignUpPage> {
             });
         break;
 
+      case SignUpResult.EMAIL_IN_USE:
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Email in Use'),
+                content: Text('Please use a different email to sign up'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+        break;
+
       default:
         showDialog(
             context: context,
@@ -149,6 +168,33 @@ class SignUpPageState extends State<SignUpPage> {
               );
             });
         break;
+    }
+  }
+
+  Future<bool> signUp() async {
+    String firstName = firstNameController.text.trim();
+    String lastName = lastNameController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
+
+    SignUpResult result =
+        validateFields(firstName, lastName, email, password, confirmPassword);
+    FocusManager.instance.primaryFocus.unfocus();
+    if (result != SignUpResult.SUCCESS) {
+      print('oh no');
+      showAlert(result);
+      return false;
+    } else {
+      SignUpResult signUpResult =
+          await auth.signUp(email, password, firstName, lastName);
+      if (signUpResult != SignUpResult.SUCCESS) {
+        showAlert(signUpResult);
+        return false;
+      } else {
+        print('yay!!!!');
+        return true;
+      }
     }
   }
 
@@ -175,7 +221,8 @@ class SignUpPageState extends State<SignUpPage> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 5.0, bottom: 20.0),
-              child: Text( // title at the top
+              child: Text(
+                // title at the top
                 'Sign Up',
                 style: TextStyle(
                     fontSize: 30.0,
@@ -187,7 +234,8 @@ class SignUpPageState extends State<SignUpPage> {
               Theme(
                 data: Theme.of(context)
                     .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField( // first name text field
+                child: TextField(
+                  // first name text field
                   textCapitalization: TextCapitalization.sentences,
                   controller: firstNameController,
                   decoration: InputDecoration(
@@ -211,7 +259,8 @@ class SignUpPageState extends State<SignUpPage> {
               Theme(
                 data: Theme.of(context)
                     .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField( // last name text field
+                child: TextField(
+                  // last name text field
                   textCapitalization: TextCapitalization.sentences,
                   controller: lastNameController,
                   decoration: InputDecoration(
@@ -235,7 +284,8 @@ class SignUpPageState extends State<SignUpPage> {
               Theme(
                 data: Theme.of(context)
                     .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField( // email text field
+                child: TextField(
+                  // email text field
                   controller: emailController,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
@@ -258,7 +308,8 @@ class SignUpPageState extends State<SignUpPage> {
               Theme(
                 data: Theme.of(context)
                     .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField( // password text field
+                child: TextField(
+                  // password text field
                   controller: passwordController,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
@@ -282,7 +333,8 @@ class SignUpPageState extends State<SignUpPage> {
               Theme(
                 data: Theme.of(context)
                     .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField( // confirm password text field
+                child: TextField(
+                  // confirm password text field
                   controller: confirmPasswordController,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
@@ -307,7 +359,8 @@ class SignUpPageState extends State<SignUpPage> {
             SizedBox(
               width: double.infinity,
               height: 50.0,
-              child: OutlinedButton( // sign up button
+              child: OutlinedButton(
+                  // sign up button
                   child: Text(
                     'Sign Up',
                     style: TextStyle(
@@ -324,23 +377,9 @@ class SignUpPageState extends State<SignUpPage> {
                         RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(25.0))),
                   ),
-                  onPressed: () {
-                    String firstName = firstNameController.text.trim();
-                    String lastName = lastNameController.text.trim();
-                    String email = emailController.text.trim();
-                    String password = passwordController.text.trim();
-                    String confirmPassword =
-                        confirmPasswordController.text.trim();
-
-                    SignUpResult result = validateFields(
-                        firstName, lastName, email, password, confirmPassword);
-                    FocusManager.instance.primaryFocus.unfocus();
-                    if (result != SignUpResult.SUCCESS) {
-                      print('oh no');
-                      showAlert(result);
-                    } else {
-                      auth.signUp(email, password, firstName, lastName);
-                      print('yay!!!!');
+                  onPressed: () async {
+                    bool signUpSuccess = await signUp();
+                    if (signUpSuccess) {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -349,7 +388,8 @@ class SignUpPageState extends State<SignUpPage> {
                   }),
             ),
             SizedBox(height: 40.0),
-            TextButton( // button to navigate to sign up page TODO make it look pretty
+            TextButton(
+                // button to navigate to sign up page TODO make it look pretty
                 child: Text("Already have an account? Sign in here"),
                 onPressed: () {
                   Navigator.pop(this.context);
