@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/model/message.dart';
 
 class ChatService {
+  
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> sendMessage(String content, String senderID, String channelID) {

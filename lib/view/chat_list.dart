@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/view/chat_list_item.dart';
-import 'package:whats_the_tea/service/chat_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/service/auth_service.dart';
-import 'package:whats_the_tea/view/sign_in.dart';
-import 'package:whats_the_tea/view/settings.dart';
+import 'package:whats_the_tea/view/create_chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:whats_the_tea/service/user_service.dart';
 
 class ChatListPage extends StatefulWidget {
   ChatListPage({
@@ -18,10 +17,9 @@ class ChatListPage extends StatefulWidget {
 class ChatListPageState extends State<ChatListPage> {
   final AuthService authService = AuthService();
 
-  final items = List<String>.generate(100, (i) => "Item $i");
+  final UserService userService = UserService();
 
-  // display chats
-  // widget for user chat
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +57,43 @@ class ChatListPageState extends State<ChatListPage> {
                     ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: 100,
+                        itemCount: 5, // TODO replace with stream of channels
                         itemBuilder: (context, index) {
                           return ChatListItem();
                         }),
                   ],
                 ),
               ))),
+      floatingActionButton: FloatingActionButton(
+          child: Container(
+            width: 60,
+            height: 60,
+            child: IconTheme(
+              data: IconThemeData(color: Colors.black),
+              child: Icon(Icons.add),
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xffa88beb),
+                    const Color(0xfff8ceec),
+                  ]),
+            ),
+          ),
+          onPressed: () async {
+            print('pressed!');
+            var friendsList =
+                await userService.fetchFriends(auth.currentUser.uid);
+            print(friendsList.length);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        CreateChatPage(friends: friendsList)));
+          }),
     );
   }
 }

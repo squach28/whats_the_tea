@@ -1,17 +1,18 @@
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:flutter/material.dart';
 
-class ChatListItem extends StatefulWidget {
+class CreateChatListItem extends StatefulWidget {
+  final String firstName;
+  final String lastName;
+
+  CreateChatListItem({Key key, this.firstName, this.lastName})
+      : super(key: key);
+
   @override
-  ChatListItemState createState() => ChatListItemState();
+  CreateChatListItemState createState() => CreateChatListItemState();
 }
 
-class ChatListItemState extends State<ChatListItem> {
-  String name;
-  String messageText;
-  String time;
-  String channelID;
-
+class CreateChatListItemState extends State<CreateChatListItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -46,7 +47,7 @@ class ChatListItemState extends State<ChatListItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'name',
+                                widget.firstName + ' ' + widget.lastName,
                                 style: TextStyle(fontSize: 16),
                               ),
                               SizedBox(

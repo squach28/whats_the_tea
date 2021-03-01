@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:whats_the_tea/view/chat_list_item.dart';
+import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/service/user_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class StartChatPage extends StatefulWidget {
+class CreateChatPage extends StatefulWidget {
+  final List<BasicUserInfo> friends;
+
+  CreateChatPage({Key key, this.friends}) : super(key: key);
+
   @override
-  StartChatPageState createState() => StartChatPageState();
+  CreateChatPageState createState() => CreateChatPageState();
 }
 
-class StartChatPageState extends State<StartChatPage> {
+class CreateChatPageState extends State<CreateChatPage> {
   final UserService userService = UserService();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.friends.length);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,26 +48,17 @@ class StartChatPageState extends State<StartChatPage> {
                         ),
                       ),
                     ),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    ChatListItem(),
-                    TextButton(
-                        child: Text('Add Friend'),
-                        onPressed: () {
-                          BasicUserInfo user =
-                              BasicUserInfo('1234567890', 'Johjn', 'Smikth');
-                          // userService.addFriend(user);
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: widget.friends.length,
+                        itemBuilder: (context, index) {
+                          return CreateChatListItem(
+                            firstName: widget.friends[index]
+                                .firstName, //friends[index].firstName,
+                            lastName: widget.friends[index]
+                                .lastName, //friends[index].lastName,
+                          );
                         }),
                   ],
                 ),

@@ -1,5 +1,7 @@
+import 'package:whats_the_tea/model/message.dart';
+
 class Channel {
   String channelID; // id of the chat channel
-  List<String> participants; // list of uids in the channel
+  List<Message> messages;
 
 }
