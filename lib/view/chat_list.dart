@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/view/chat_list_item.dart';
-import 'package:whats_the_tea/service/chat_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/service/auth_service.dart';
-import 'package:whats_the_tea/view/sign_in.dart';
-import 'package:whats_the_tea/view/settings.dart';
+import 'package:whats_the_tea/view/create_chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:whats_the_tea/service/user_service.dart';
 
 class ChatListPage extends StatefulWidget {
   ChatListPage({
@@ -18,14 +17,16 @@ class ChatListPage extends StatefulWidget {
 class ChatListPageState extends State<ChatListPage> {
   final AuthService authService = AuthService();
 
-  // display chats
-  // widget for user chat
+  final UserService userService = UserService();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffbcfdc9),
       body: SafeArea(
+          minimum: EdgeInsets.only(left: 5.0, right: 5.0),
           child: Padding(
               padding: EdgeInsets.only(left: 5.0, right: 5.0),
               child: SingleChildScrollView(
@@ -53,42 +54,46 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        ChatListItem(),
-                        Text('hello world'),
-                        TextButton(
-                            onPressed: () {
-                              ChatService chatService = ChatService();
-                              Future<DocumentReference> chat = chatService
-                                  .sendMessage('test1', 'test2', 'lmao xdddd');
-                              chat.then((DocumentReference value) =>
-                                  print(value.path));
-                            },
-                            child: Text('Chat Test')),
-                        TextButton(
-                          onPressed: () {
-                            authService.signOut();
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        SignInPage()));
-                          },
-                          child: Text('Sign Out'),
-                        )
-                      ],
-                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 5, // TODO replace with stream of channels
+                        itemBuilder: (context, index) {
+                          return ChatListItem();
+                        }),
                   ],
                 ),
               ))),
+      floatingActionButton: FloatingActionButton(
+          child: Container(
+            width: 60,
+            height: 60,
+            child: IconTheme(
+              data: IconThemeData(color: Colors.black),
+              child: Icon(Icons.add),
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xffa88beb),
+                    const Color(0xfff8ceec),
+                  ]),
+            ),
+          ),
+          onPressed: () async {
+            print('pressed!');
+            var friendsList =
+                await userService.fetchFriends(auth.currentUser.uid);
+            print(friendsList.length);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        CreateChatPage(friends: friendsList)));
+          }),
     );
   }
 }

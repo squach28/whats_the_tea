@@ -20,8 +20,7 @@ class SignUpPageState extends State<SignUpPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final auth = AuthService(); // service to handle authentication
-  final databaseController =
-      DatabaseController(); // service to handle firestore requests
+  final userService = UserService(); // service to handle firestore requests
 
   // validates an inputted string and returns true if the string is a valid email
   // returns false if the inputted string is not a valid email

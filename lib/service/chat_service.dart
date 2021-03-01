@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/model/message.dart';
 
 class ChatService {
+  
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> sendMessage(String content, String senderID, String channelID) {
@@ -34,7 +35,7 @@ class ChatService {
     CollectionReference users = firestore.collection('users');
 
     for (User participant in participants) {
-      await users.where('uID', isEqualTo: participant.uID).get().then((value) {
+      await users.where('uid', isEqualTo: participant.uid).get().then((value) {
         for (QueryDocumentSnapshot queries in value.docs) {
           queries.reference
               .update({'channels': FieldValue.arrayUnion(channelIDAsList)});

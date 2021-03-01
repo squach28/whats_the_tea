@@ -9,7 +9,7 @@ import 'package:whats_the_tea/model/user.dart' as m;
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  final DatabaseController databaseController = DatabaseController();
+  final UserService userService = UserService();
 
   // signs the user in with email and password
   Future<SignInResult> signIn(String email, String password) async {
@@ -54,7 +54,7 @@ class AuthService {
       );
 
       // create user profile an store in firestore
-      databaseController.createUserProfile(user);
+      userService.createUserProfile(user);
 
       print('successfully created account!');
 
