@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class CreateChatListItem extends StatefulWidget {
   final String firstName;
   final String lastName;
+  final bool isSelected;
 
-  CreateChatListItem({Key key, this.firstName, this.lastName})
+  CreateChatListItem({Key key, this.firstName, this.lastName, this.isSelected})
       : super(key: key);
 
   @override
@@ -13,15 +14,13 @@ class CreateChatListItem extends StatefulWidget {
 }
 
 class CreateChatListItemState extends State<CreateChatListItem> {
+
+
+  
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ChannelRoom();
-          }));
-        },
-        child: Card(
+    return Card(
           color: const Color(0xfffdcece),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -48,17 +47,10 @@ class CreateChatListItemState extends State<CreateChatListItem> {
                             children: <Widget>[
                               Text(
                                 widget.firstName + ' ' + widget.lastName,
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: 20,),
                               ),
                               SizedBox(
                                 height: 6,
-                              ),
-                              Text(
-                                'messageText',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.normal),
                               ),
                             ],
                           ),
@@ -67,13 +59,13 @@ class CreateChatListItemState extends State<CreateChatListItem> {
                     ],
                   ),
                 ),
-                Text(
-                  'time',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                Container(
+                  child: widget.isSelected == true ? Icon(Icons.check) : Container(height:0),
+                  
                 ),
               ],
             ),
           ),
-        ));
+        );
   }
 }

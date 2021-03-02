@@ -5,6 +5,7 @@ class BasicUserInfo {
   final String uid;
   final String firstName;
   final String lastName;
+  bool isSelected = false;
 
   // ctor that takes params uID, firstName, lastName
   // uID can be retrieved from authentication

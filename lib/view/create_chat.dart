@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/view/chat_list_item.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateChatPage extends StatefulWidget {
+  // TODO put the gesture detector in this class, not create_chat_list_item
   final List<BasicUserInfo> friends;
 
   CreateChatPage({Key key, this.friends}) : super(key: key);
@@ -18,16 +20,25 @@ class CreateChatPageState extends State<CreateChatPage> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  List<BasicUserInfo> participants = [];
+
   @override
   void initState() {
     super.initState();
-    print(widget.friends.length);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Create New Chat'), actions: <Widget>[
+        Container(
+            child: participants.isEmpty ? Container(height: 0) : IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            print('create chat!');
+          },
+        ))
+      ]),
       body: Container(
         child: SafeArea(
             minimum: EdgeInsets.all(5.0),
@@ -53,12 +64,27 @@ class CreateChatPageState extends State<CreateChatPage> {
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: widget.friends.length,
                         itemBuilder: (context, index) {
-                          return CreateChatListItem(
-                            firstName: widget.friends[index]
-                                .firstName, //friends[index].firstName,
-                            lastName: widget.friends[index]
-                                .lastName, //friends[index].lastName,
-                          );
+                          return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (!participants
+                                      .contains(widget.friends[index])) {
+                                    participants.add(widget.friends[index]);
+                                    print(participants.length);
+                                  } else {
+                                    participants.remove(widget.friends[index]);
+                                    print(participants.length);
+                                  }
+                                });
+                              },
+                              child: CreateChatListItem(
+                                firstName: widget.friends[index].firstName,
+                                lastName: widget.friends[index].lastName,
+                                isSelected:
+                                    participants.contains(widget.friends[index])
+                                        ? true
+                                        : false,
+                              ));
                         }),
                   ],
                 ),
