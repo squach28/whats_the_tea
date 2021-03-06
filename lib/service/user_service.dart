@@ -25,7 +25,7 @@ class UserService {
   // adds a user to a friend's list
   // also adds the current user to the friend's list
   // takes 2 params, the currentuser who initiated friend request and the requested friend
-  Future<void> addFriend(BasicUserInfo currentUser, BasicUserInfo friendToAdd) {
+  void addFriend(BasicUserInfo currentUser, BasicUserInfo friendToAdd) {
     CollectionReference users = firestore.collection('users');
     List<Map<String, dynamic>> friendToAddInfo = [friendToAdd.toJson()];
     List<Map<String, dynamic>> currentUserInfo = [currentUser.toJson()];
@@ -39,7 +39,24 @@ class UserService {
   }
 
   // send friend request
-  Future<void> sendFriendRequest(User sender, User recipient) {}
+  void sendFriendRequest(BasicUserInfo sender, String recipientuid) {
+    CollectionReference users = firestore.collection('users');
+    List<Map<String, dynamic>> senderInfo = [sender.toJson()];
+
+    users
+        .doc(recipientuid)
+        .update({'friendRequests': FieldValue.arrayUnion(senderInfo)});
+  }
+
+  void acceptFriendRequest(BasicUserInfo friendRequest) async {
+    await firestore.collection('users').doc(auth.currentUser.uid).update({
+      'friendRequests': FieldValue.arrayRemove([friendRequest.toJson()])
+    });
+
+    await firestore.collection('users').doc(auth.currentUser.uid).update({
+      'friends': FieldValue.arrayUnion([friendRequest.toJson()])
+    });
+  }
 
   Future<List<BasicUserInfo>> fetchFriends(String uid) async {
     List<BasicUserInfo> friendsList = [];
@@ -73,31 +90,37 @@ class UserService {
     return friends;
   }
 
-  Future<List<BasicUserInfo>> fetchUsers() async {
-    var doc = await firestore.collection('users').get();
-
-    print(doc.size);
-
-    //return users;
-  }
-
-  // gets the first name of the current user
-  String getFirstName(String uid) {
+  BasicUserInfo getCurrentUserInfo(String uid) {
     String firstName = '';
     firestore.collection('users').doc(uid).get().then((value) {
       firstName = value.data()['firstName'];
     });
-
-    return firstName.isEmpty ? null : firstName;
-  }
-
-  // gets the last name of the current user
-  String getLastName(String uid) {
     String lastName = '';
     firestore.collection('users').doc(uid).get().then((value) {
       lastName = value.data()['lastName'];
     });
 
-    return lastName.isEmpty ? null : lastName;
+    return BasicUserInfo(uid, firstName, lastName);
+  }
+
+  // gets the first name of the current user
+  Future<String> getFirstName(String uid) async {
+    String firstName = '';
+    await firestore.collection('users').doc(uid).get().then((value) {
+      firstName = value.data()['firstName'];
+      print('in function: ' + firstName);
+    });
+    print('before return: ' + firstName);
+    return firstName;
+  }
+
+  // gets the last name of the current user
+  Future<String> getLastName(String uid) async {
+    String lastName = '';
+    await firestore.collection('users').doc(uid).get().then((value) {
+      lastName = value.data()['lastName'];
+    });
+
+    return lastName;
   }
 }

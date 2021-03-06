@@ -39,10 +39,15 @@ class AuthService {
   Future<SignUpResult> signUp(
       String email, String password, String firstName, String lastName) async {
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await auth
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      )
+          .then((value) {
+        value.user.updateProfile(displayName: firstName + ' ' + lastName);
+        return;
+      });
 
       // create a user
       m.User user = m.User(
@@ -51,6 +56,7 @@ class AuthService {
         lastName,
         [],
         [], // empty list of friends on user creation
+        [],
       );
 
       // create user profile an store in firestore

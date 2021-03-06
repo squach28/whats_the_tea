@@ -1,3 +1,4 @@
+import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/model/message.dart';
@@ -27,14 +28,14 @@ class ChatService {
 
   // creates a chat channel with a list of participants
   // chanel id will be added to both participants' lists of chat channels
-  Future<void> createChannel(List<User> participants) async {
+  Future<void> createChannel(List<BasicUserInfo> participants) async {
     String channelID = firestore.collection('channels').doc().id;
 
     List<String> channelIDAsList = [channelID];
 
     CollectionReference users = firestore.collection('users');
 
-    for (User participant in participants) {
+    for (BasicUserInfo participant in participants) {
       await users.where('uid', isEqualTo: participant.uid).get().then((value) {
         for (QueryDocumentSnapshot queries in value.docs) {
           queries.reference

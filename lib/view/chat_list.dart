@@ -24,7 +24,8 @@ class ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffbcfdc9),
+      // Color(0xffece6ff) TODO light purple pastel
+      backgroundColor: const Color(0xffece6ff),
       body: SafeArea(
           minimum: EdgeInsets.only(left: 5.0, right: 5.0),
           child: Padding(
@@ -54,13 +55,7 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: 5, // TODO replace with stream of channels
-                        itemBuilder: (context, index) {
-                          return ChatListItem();
-                        }),
+
                   ],
                 ),
               ))),

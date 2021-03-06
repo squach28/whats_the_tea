@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/service/auth_service.dart';
-import 'package:whats_the_tea/view/settings.dart';
+import 'package:whats_the_tea/service/user_service.dart';
+import 'package:whats_the_tea/view/me_page.dart';
 import 'package:whats_the_tea/view/chat_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,12 +14,13 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final AuthService authService = AuthService();
-  final List<Widget> children = [ChatListPage(), SettingsPage()];
+  final UserService userService = UserService();
+  final List<Widget> children = [ChatListPage(), MePage()];
   int currentIndex = 0;
 
   // display chats
   // widget for user chat
+
 
   void onTabTapped(int index) {
     print('tab tapped!');
@@ -30,21 +32,24 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffbcfdc9),
+      backgroundColor: Color(0xffece6d6),
       body: children[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Chats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: currentIndex,
-        onTap: onTabTapped,
+      bottomNavigationBar: Theme(
+        data: ThemeData(primaryColor: Theme.of(context).accentColor),
+        child: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.message),
+              label: 'Chats',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Me'
+            ),
+          ],
+          currentIndex: currentIndex,
+          onTap: onTabTapped,
+        ),
       ),
     );
   }

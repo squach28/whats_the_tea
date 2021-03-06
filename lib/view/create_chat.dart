@@ -3,6 +3,7 @@ import 'package:whats_the_tea/view/chat_list_item.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/service/user_service.dart';
+import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateChatPage extends StatefulWidget {
@@ -20,24 +21,26 @@ class CreateChatPageState extends State<CreateChatPage> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  List<BasicUserInfo> participants = [];
+  final ChatService chatService = ChatService();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  List<BasicUserInfo> participants = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Create New Chat'), actions: <Widget>[
         Container(
-            child: participants.isEmpty ? Container(height: 0) : IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            print('create chat!');
-          },
-        ))
+            child: participants.isEmpty
+                ? Container(height: 0)
+                : IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: () {
+                      print('create chat!');
+                      participants.add(
+                          userService.getCurrentUserInfo(auth.currentUser.uid));
+                      chatService.createChannel(participants);
+                    },
+                  ))
       ]),
       body: Container(
         child: SafeArea(
@@ -91,9 +94,6 @@ class CreateChatPageState extends State<CreateChatPage> {
               )),
             ])),
       ),
-      // search bar to add person
-      // container to show people being added
-      // container for the list of people to add
     );
   }
 }
