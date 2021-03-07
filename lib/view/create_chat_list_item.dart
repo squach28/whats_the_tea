@@ -1,6 +1,7 @@
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:flutter/material.dart';
 
+// potential item for selecting to create a chat
 class CreateChatListItem extends StatefulWidget {
   final BasicUserInfo friendInfo;
   final bool isSelected;

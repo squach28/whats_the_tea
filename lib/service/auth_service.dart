@@ -22,16 +22,22 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'user-not-found') {
+        // user doesn't exist
         print('no user found for that email');
         return SignInResult.USER_NOT_FOUND;
       } else if (e.code == 'wrong-password') {
+        // wrong password entered
         print('wrong password provided for the user');
         return SignInResult.WRONG_PASSWORD;
       } else {
+        // other source of auth fail
         print('error: ' + e.code);
+        return SignInResult.FAIL;
       }
     } on PlatformException catch (error) {
+      // platform exception handling
       print(error.message);
+      return SignInResult.FAIL;
     }
   }
 
@@ -45,7 +51,9 @@ class AuthService {
         password: password,
       )
           .then((value) {
-        value.user.updateProfile(displayName: firstName + ' ' + lastName);
+        value.user.updateProfile(
+            displayName:
+                firstName + ' ' + lastName); // set the user's name in auth
         return;
       });
 
@@ -54,29 +62,43 @@ class AuthService {
         auth.currentUser.uid, // uid taken from auth
         firstName,
         lastName,
+        [], // empty list of friends
+        [], // empty list of channels
         [],
-        [], // empty list of friends on user creation
-        [],
+        [], // empty list of friend requests
       );
 
-      // create user profile an store in firestore
+      // create user profile in firestore
       userService.createUserProfile(user);
-
-      print('successfully created account!');
 
       return SignUpResult.SUCCESS;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
+        // weak password, must be 6 characters or longer
         print('the password is too weak');
         return SignUpResult.WEAK_PASSWORD;
       } else if (e.code == 'email-already-in-use') {
+        // email already in database
         print('email is already in use');
         return SignUpResult.EMAIL_IN_USE;
+      } else {
+        // other source of auth fail
+        return SignUpResult.FAIL;
       }
+    } on PlatformException catch (e) {
+      // platform exception handling
+      print(e.message);
+      return SignUpResult.FAIL;
     }
   }
 
+  // signs the user out of the current session
   Future<void> signOut() {
-    return auth.signOut();
+    try {
+      return auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      // auth exception
+      print(e.message);
+    }
   }
 }

@@ -20,17 +20,18 @@ class ChannelRoomState extends State<ChannelRoom> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  final TextEditingController messageController = TextEditingController();
+  final TextEditingController messageController = TextEditingController(); // controller for the text field sending messages
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat!'),
+        title: const Text('Chat!'), // TODO replace with the other user's name
       ),
       body: SafeArea(
         child: Stack(
           children: [
+            // StreamBuilder(); TODO do stream builder
             ListView.builder(
                 itemCount: 5,
                 shrinkWrap: true,
@@ -51,7 +52,7 @@ class ChannelRoomState extends State<ChannelRoom> {
                   width: double.infinity,
                   color: Colors.white,
                   child: Row(children: <Widget>[
-                    GestureDetector(
+                    GestureDetector( // gesture detector for sending images
                       onTap: () {},
                       child: Container(
                         height: 30,
@@ -84,16 +85,16 @@ class ChannelRoomState extends State<ChannelRoom> {
                         // String content, String senderID, String channelID
                         String message = messageController.text;
 
-                        if (message.isEmpty) {
+                        if (message.isEmpty) { // if nothing is written, do nothing
                           return;
                         }
                         print(widget.channel.channelID == null);
                         print(widget.channel.participants.toString());
 
                         chatService.sendMessage(message, auth.currentUser.uid,
-                            widget.channel.channelID); // TODO replace test with actual channel id
+                            widget.channel.channelID); 
                         print('message sent');
-                        messageController.clear();
+                        messageController.clear(); // clear the text field when message is sent
                       },
                       child: Icon(Icons.send, color: Colors.white, size: 18),
                       backgroundColor: Colors.blue,

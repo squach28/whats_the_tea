@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
-import 'package:whats_the_tea/view/chat_list_item.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// page that has a list of friends to create a chat with
 class CreateChatPage extends StatefulWidget {
   @override
   CreateChatPageState createState() => CreateChatPageState();
@@ -36,7 +36,7 @@ class CreateChatPageState extends State<CreateChatPage> {
                     onPressed: () async {
                       print('create chat!');
                       participants.add(await userService
-                          .getCurrentUserInfo(auth.currentUser.uid));
+                          .getUserInfo(auth.currentUser.uid));
                       var channel =
                           await chatService.createChannel(participants);
                       Navigator.pushReplacement(

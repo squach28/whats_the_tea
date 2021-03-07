@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/view/user_list_item.dart';
 
+// page that shows a user's friends
+// top of the page will allow user to see incoming friend requests
 class FriendsPage extends StatefulWidget {
   final List<BasicUserInfo> friends;
 
@@ -66,7 +68,7 @@ class FriendsPageState extends State<FriendsPage> {
                                       child: Text(
                                           '$numOfFriendRequests incoming friend requests'),
                                       onPressed: () {
-                                                                                Navigator.push(
+                                        Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder:
@@ -90,8 +92,7 @@ class FriendsPageState extends State<FriendsPage> {
                             return Center(child: CircularProgressIndicator());
                           } else {
                             print('wack');
-                            List<dynamic> friends =
-                                snapshot.data['friends'];
+                            List<dynamic> friends = snapshot.data['friends'];
 
                             return ListView.builder(
                                 shrinkWrap: true,
@@ -99,11 +100,14 @@ class FriendsPageState extends State<FriendsPage> {
                                 itemCount: friends.length,
                                 itemBuilder: (context, index) {
                                   var friendRequest = friends[index];
-                                  print(friendRequest.runtimeType);
+                                  BasicUserInfo friendRequestInfo =
+                                      BasicUserInfo(
+                                    friendRequest['uid'],
+                                    friendRequest['firstName'],
+                                    friendRequest['lastName'],
+                                  );
                                   return UserListItem(
-                                      uid: friendRequest['uid'],
-                                      firstName: friendRequest['firstName'],
-                                      lastName: friendRequest['lastName'],
+                                      userInfo: friendRequestInfo,
                                       friendStatus: FriendStatus.FRIENDS);
                                 });
                           }

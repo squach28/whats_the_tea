@@ -4,14 +4,14 @@ import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/model/friend_status.dart';
 
+// represents a widget about a user's info as an item
+// used in the Find People page
 class UserListItem extends StatefulWidget {
-  final String uid;
-  final String firstName;
-  final String lastName;
+  final BasicUserInfo userInfo;
   final FriendStatus friendStatus;
 
   UserListItem(
-      {Key key, this.uid, this.firstName, this.lastName, this.friendStatus})
+      {Key key, this.userInfo, this.friendStatus})
       : super(key: key);
 
   @override
@@ -30,14 +30,10 @@ class UserListItemState extends State<UserListItem> {
           return TextButton(
               child: Text('Add Friend'),
               onPressed: () async {
-                final String firstName =
-                    await userService.getFirstName(auth.currentUser.uid);
-                final String lastName =
-                    await userService.getLastName(auth.currentUser.uid);
 
-                BasicUserInfo currentUserInfo =
-                    BasicUserInfo(auth.currentUser.uid, firstName, lastName);
-                userService.sendFriendRequest(currentUserInfo, widget.uid);
+                BasicUserInfo currentUserInfo = await userService.getUserInfo(auth.currentUser.uid);
+                    
+                userService.sendFriendRequest(currentUserInfo, widget.userInfo); 
               });
         }
 
@@ -83,7 +79,7 @@ class UserListItemState extends State<UserListItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.firstName + ' ' + widget.lastName,
+                            widget.userInfo.firstName + ' ' + widget.userInfo.lastName,
                             style: TextStyle(
                               fontSize: 20,
                             ),

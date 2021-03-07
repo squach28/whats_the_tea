@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/view/friends.dart';
 import 'package:whats_the_tea/view/settings.dart';
 
+// page that includes options for the user to see friends, find people, adjust settings, and sign out
 class MePage extends StatefulWidget {
   @override
   MePageState createState() => MePageState();

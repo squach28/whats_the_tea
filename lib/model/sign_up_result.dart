@@ -5,5 +5,6 @@ enum SignUpResult {
   UNMATCHED_PASSWORDS,
   WEAK_PASSWORD,
   EMAIL_IN_USE,
+  FAIL,
   SUCCESS,
 }

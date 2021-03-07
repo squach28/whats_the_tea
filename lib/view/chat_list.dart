@@ -9,6 +9,7 @@ import 'package:whats_the_tea/view/create_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 
+// page that contains the list of chats that a user has
 class ChatListPage extends StatefulWidget {
   ChatListPage({
     Key key,
@@ -28,7 +29,6 @@ class ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Color(0xffece6ff) TODO light purple pastel
       backgroundColor: const Color(0xffece6ff),
       body: SafeArea(
           minimum: EdgeInsets.only(left: 5.0, right: 5.0),
@@ -40,13 +40,13 @@ class ChatListPageState extends State<ChatListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      child: Text('Chats', style: TextStyle(fontSize: 50.0)),
+                      child: Text('Chats', style: TextStyle(fontSize: 50.0)), // chat header
                       padding: EdgeInsets.only(left: 10.0, top: 20.0),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 10.0, right: 10.0, bottom: 20.0),
-                      child: TextField(
+                      child: TextField( // search text field
                         decoration: InputDecoration(
                           fillColor: Colors.grey,
                           filled: true,
@@ -59,32 +59,34 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
-                    StreamBuilder(
+                    StreamBuilder( // stream builder for loading users collection
                         stream: FirebaseFirestore.instance
                             .collection('users')
                             .doc(auth.currentUser.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
+                          if (!snapshot.hasData) { // no data --> show progress indicator
                             return Center(child: CircularProgressIndicator());
                           } else {
-                            List<dynamic> chats = snapshot.data['channels'];
+                            List<dynamic> chats = snapshot.data['channels']; // list of all users
 
-                            return StreamBuilder(
+                            return StreamBuilder( // stream builder for channels collection
                                 stream: FirebaseFirestore.instance
                                     .collection('channels')
                                     .snapshots(),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
+                                  if (!snapshot.hasData) { // no data --> show progress indicator
                                     return Center(
                                         child: CircularProgressIndicator());
                                   } else {
-                                    QuerySnapshot channels = snapshot.data;
-                                    Map<String, Channel> allChannels = {};
-                                    Map<String, Channel> userChannels = {};
+                                    QuerySnapshot channels = snapshot.data; // list of all channels
+                                    Map<String, Channel> allChannels = {}; // map of all channels with key value pair {channelID: Channel}
+                                    Map<String, Channel> userChannels = {}; // map of user channels with key value pair {channelID: Channel}
+                                    
                                     for (var channel in channels.docs) {
                                       List<BasicUserInfo> participants = [];
                                       List<Message> messages = [];
+                                      // find the participants in each channel
                                       for (var participant
                                           in channel.data()['participants']) {
                                         BasicUserInfo participantInfo =
@@ -92,9 +94,10 @@ class ChatListPageState extends State<ChatListPage> {
                                                 participant['uid'],
                                                 participant['firstName'],
                                                 participant['lastName']);
-                                        participants.add(participantInfo);
+                                        participants.add(participantInfo); // add participant info to list of participants
                                       }
 
+                                      // find the messages in each channel
                                       for (var message
                                           in channel.data()['messages']) {
                                         Message messageInfo = Message(
@@ -102,15 +105,18 @@ class ChatListPageState extends State<ChatListPage> {
                                             message['content'],
                                             message['senderID'],
                                             message['sentAt'].toDate());
-                                        messages.add(messageInfo);
+                                        messages.add(messageInfo); // add message info to list of messages
                                       }
 
+
+                                      // create channelInfo as channel object
                                       Channel channelInfo = Channel(
                                           channel.data()['channelID'],
                                           participants,
                                           messages);
                                       allChannels[channel.data()['channelID']] = channelInfo;
                                     }
+                                    // fill userChannels with channel info if match is found
                                     for (var channelID in chats) {
                                       userChannels[channelID] = allChannels[channelID];
                                     }
@@ -124,7 +130,8 @@ class ChatListPageState extends State<ChatListPage> {
                                         if(key == null) {
                                           return SizedBox(height:0, width: 0);
                                         } else {
-                                        return ChatListItem(
+                                          // chat list item with channel info included
+                                        return ChatListItem( 
                                           channel: key
                                         );
                                       }

@@ -4,6 +4,7 @@ import 'package:whats_the_tea/view/sign_up.dart';
 import 'package:whats_the_tea/model/sign_in_result.dart';
 import 'package:whats_the_tea/view/home_page.dart';
 
+// sign in page
 class SignInPage extends StatefulWidget {
   SignInPage({
     Key key,

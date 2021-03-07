@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/view/friend_request_item.dart';
 
+// page that contains the list of friend requests a user has
 class FriendRequestsPage extends StatefulWidget {
   @override
   FriendRequestsPageState createState() => FriendRequestsPageState();
@@ -44,11 +45,9 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                                 itemCount: friendRequests.length,
                                 itemBuilder: (context, index) {
                                   var friendRequest = friendRequests[index];
-                                  print(friendRequest.runtimeType);
+                                  var friendRequestInfo = friendRequest.fromJson();
                                   return FriendRequestItem(
-                                      uid: friendRequest['uid'],
-                                      firstName: friendRequest['firstName'],
-                                      lastName: friendRequest['lastName']);
+                                      friendRequestInfo: friendRequestInfo);
                                 });
                           }
                         }))

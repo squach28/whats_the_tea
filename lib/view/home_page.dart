@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:whats_the_tea/service/auth_service.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/view/me_page.dart';
 import 'package:whats_the_tea/view/chat_list.dart';
 
+// home page that includes list of chats the user has
 class HomePage extends StatefulWidget {
   HomePage({
     Key key,

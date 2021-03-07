@@ -3,26 +3,22 @@ import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/model/channel.dart';
-
+// list item that represents a channel
 class ChatListItem extends StatefulWidget {
-
-  final Channel channel;
+  final Channel channel; // associated channel for the chat list item
 
   ChatListItem({Key key, this.channel}) : super(key: key);
-  
+
   @override
   ChatListItemState createState() => ChatListItemState();
 }
 
 class ChatListItemState extends State<ChatListItem> {
-  String name;
-  String messageText;
-  String time;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   String getParticipantName(List<BasicUserInfo> participants) {
-    for(BasicUserInfo participant in participants) {
-      if(participant.uid != auth.currentUser.uid) {
+    for (BasicUserInfo participant in participants) {
+      if (participant.uid != auth.currentUser.uid) {
         return participant.firstName + ' ' + participant.lastName;
       }
     }
@@ -62,6 +58,7 @@ class ChatListItemState extends State<ChatListItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
+                                // other user's name
                                 getParticipantName(widget.channel.participants),
                                 style: TextStyle(fontSize: 16),
                               ),
@@ -69,6 +66,7 @@ class ChatListItemState extends State<ChatListItem> {
                                 height: 6,
                               ),
                               Text(
+                                // most recent message content
                                 'messageText',
                                 style: TextStyle(
                                     fontSize: 13,
@@ -83,6 +81,7 @@ class ChatListItemState extends State<ChatListItem> {
                   ),
                 ),
                 Text(
+                  // time stamp of most recently sent message
                   'time',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                 ),

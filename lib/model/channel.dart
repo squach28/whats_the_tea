@@ -1,6 +1,7 @@
 import 'package:whats_the_tea/model/message.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 
+// class to contain info about a channel
 class Channel {
   String channelID; // id of the chat channel
   List<BasicUserInfo> participants;
@@ -17,7 +18,7 @@ class Channel {
 
     Map<String, dynamic> toJson() => {
       'channelID': channelID,
-      'participants': participants,
+      'participants': participants, 
       'messages' : messages
     };
 

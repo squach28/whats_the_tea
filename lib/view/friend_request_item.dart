@@ -4,12 +4,11 @@ import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/model/friend_status.dart';
 
+// represents an incoming friend request item
 class FriendRequestItem extends StatefulWidget {
-  final String uid;
-  final String firstName;
-  final String lastName;
+  final BasicUserInfo friendRequestInfo;
 
-  FriendRequestItem({Key key, this.uid, this.firstName, this.lastName})
+  FriendRequestItem({Key key, this.friendRequestInfo})
       : super(key: key);
 
   @override
@@ -28,14 +27,16 @@ class FriendRequestItemState extends State<FriendRequestItem> {
           return TextButton(
               child: Text('Add Friend'),
               onPressed: () async {
+                /*
                 final String firstName =
-                    await userService.getFirstName(auth.currentUser.uid);
+                    await userService.getUserInfo(auth.currentUser.uid).then((value) => value.firstName);
                 final String lastName =
-                    await userService.getLastName(auth.currentUser.uid);
-
-                BasicUserInfo currentUserInfo =
-                    BasicUserInfo(auth.currentUser.uid, firstName, lastName);
-                userService.sendFriendRequest(currentUserInfo, widget.uid);
+                    await userService.getUserInfo(auth.currentUser.uid).then((value) => value.lastName); */
+                final BasicUserInfo currentUserInfo = await userService.getUserInfo(auth.currentUser.uid);
+                print('first name: ' + currentUserInfo.firstName);
+                //BasicUserInfo currentUserInfo =
+                //    BasicUserInfo(auth.currentUser.uid, firstName, lastName);
+                userService.sendFriendRequest(currentUserInfo, widget.friendRequestInfo);
               });
         }
 
@@ -84,7 +85,7 @@ class FriendRequestItemState extends State<FriendRequestItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.firstName + ' ' + widget.lastName,
+                            widget.friendRequestInfo.firstName + ' ' + widget.friendRequestInfo.lastName,
                             style: TextStyle(
                               fontSize: 20,
                             ),
@@ -113,9 +114,9 @@ class FriendRequestItemState extends State<FriendRequestItem> {
                         child: Icon(Icons.check)),
                     onPressed: () {
                       BasicUserInfo friendRequest = BasicUserInfo(
-                        widget.uid,
-                        widget.firstName,
-                        widget.lastName
+                        widget.friendRequestInfo.uid,
+                        widget.friendRequestInfo.firstName,
+                        widget.friendRequestInfo.lastName
                       );
                       userService.acceptFriendRequest(friendRequest);
                     }),
