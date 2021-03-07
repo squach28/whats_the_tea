@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/service/user_service.dart';
+import 'package:whats_the_tea/model/channel.dart';
 
 // class that conatins widget for building the channel room view
 class ChannelRoom extends StatefulWidget {
+  final Channel channel;
+
+  ChannelRoom({Key key, this.channel}) : super(key: key);
   @override
   ChannelRoomState createState() => ChannelRoomState();
 }
@@ -17,8 +21,6 @@ class ChannelRoomState extends State<ChannelRoom> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   final TextEditingController messageController = TextEditingController();
-
-  String channelID;
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +87,12 @@ class ChannelRoomState extends State<ChannelRoom> {
                         if (message.isEmpty) {
                           return;
                         }
+                        print(widget.channel.channelID == null);
+                        print(widget.channel.participants.toString());
 
                         chatService.sendMessage(message, auth.currentUser.uid,
-                            'test'); // TODO replace test with actual channel id
+                            widget.channel.channelID); // TODO replace test with actual channel id
+                        print('message sent');
                         messageController.clear();
                       },
                       child: Icon(Icons.send, color: Colors.white, size: 18),

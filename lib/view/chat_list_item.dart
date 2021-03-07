@@ -1,7 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/model/channel.dart';
 
 class ChatListItem extends StatefulWidget {
+
+  final Channel channel;
+
+  ChatListItem({Key key, this.channel}) : super(key: key);
+  
   @override
   ChatListItemState createState() => ChatListItemState();
 }
@@ -10,14 +18,22 @@ class ChatListItemState extends State<ChatListItem> {
   String name;
   String messageText;
   String time;
-  String channelID;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  String getParticipantName(List<BasicUserInfo> participants) {
+    for(BasicUserInfo participant in participants) {
+      if(participant.uid != auth.currentUser.uid) {
+        return participant.firstName + ' ' + participant.lastName;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ChannelRoom();
+            return ChannelRoom(channel: widget.channel);
           }));
         },
         child: Card(
@@ -46,7 +62,7 @@ class ChatListItemState extends State<ChatListItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'name',
+                                getParticipantName(widget.channel.participants),
                                 style: TextStyle(fontSize: 16),
                               ),
                               SizedBox(

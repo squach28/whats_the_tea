@@ -54,6 +54,7 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                   itemBuilder: (context, index) {
                                     DocumentSnapshot ds =
                                         snapshot.data.docs[index];
+                                    
                                     if (ds.data()['uid'] ==
                                         auth.currentUser.uid) {
                                       return SizedBox(height: 0, width: 0);
@@ -64,8 +65,7 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                           ds.data()['friendRequests'];
                                       for (var friend in friends) {
                                         print(friend['uid']);
-                                        if (friend['uid'] ==
-                                            auth.currentUser.uid) {
+                                        if (friends.contains(friend['uid'])) {
                                           friendStatus = FriendStatus.FRIENDS;
                                         }
                                       }

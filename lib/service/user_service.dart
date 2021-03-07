@@ -90,13 +90,13 @@ class UserService {
     return friends;
   }
 
-  BasicUserInfo getCurrentUserInfo(String uid) {
+  Future<BasicUserInfo> getCurrentUserInfo(String uid) async {
     String firstName = '';
-    firestore.collection('users').doc(uid).get().then((value) {
+    await firestore.collection('users').doc(uid).get().then((value) {
       firstName = value.data()['firstName'];
     });
     String lastName = '';
-    firestore.collection('users').doc(uid).get().then((value) {
+    await firestore.collection('users').doc(uid).get().then((value) {
       lastName = value.data()['lastName'];
     });
 

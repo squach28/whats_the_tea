@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/model/basic_user.dart';
+import 'package:whats_the_tea/model/channel.dart';
+import 'package:whats_the_tea/model/message.dart';
 import 'package:whats_the_tea/view/chat_list_item.dart';
 import 'package:whats_the_tea/service/auth_service.dart';
 import 'package:whats_the_tea/view/create_chat.dart';
@@ -55,7 +59,81 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(auth.currentUser.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            List<dynamic> chats = snapshot.data['channels'];
 
+                            return StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('channels')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else {
+                                    QuerySnapshot channels = snapshot.data;
+                                    Map<String, Channel> allChannels = {};
+                                    Map<String, Channel> userChannels = {};
+                                    for (var channel in channels.docs) {
+                                      List<BasicUserInfo> participants = [];
+                                      List<Message> messages = [];
+                                      for (var participant
+                                          in channel.data()['participants']) {
+                                        BasicUserInfo participantInfo =
+                                            BasicUserInfo(
+                                                participant['uid'],
+                                                participant['firstName'],
+                                                participant['lastName']);
+                                        participants.add(participantInfo);
+                                      }
+
+                                      for (var message
+                                          in channel.data()['messages']) {
+                                        Message messageInfo = Message(
+                                            message['channelID'],
+                                            message['content'],
+                                            message['senderID'],
+                                            message['sentAt'].toDate());
+                                        messages.add(messageInfo);
+                                      }
+
+                                      Channel channelInfo = Channel(
+                                          channel.data()['channelID'],
+                                          participants,
+                                          messages);
+                                      allChannels[channel.data()['channelID']] = channelInfo;
+                                    }
+                                    for (var channelID in chats) {
+                                      userChannels[channelID] = allChannels[channelID];
+                                    }
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: userChannels.length,
+                                      itemBuilder: (context, index) {
+                                        
+                                        Channel key = userChannels.values.elementAt(index);
+                                        if(key == null) {
+                                          return SizedBox(height:0, width: 0);
+                                        } else {
+                                        return ChatListItem(
+                                          channel: key
+                                        );
+                                      }
+                                      }
+                                    );
+                                  }
+                                });
+                          }
+                        }),
                   ],
                 ),
               ))),
@@ -86,8 +164,7 @@ class ChatListPageState extends State<ChatListPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        CreateChatPage(friends: friendsList)));
+                    builder: (BuildContext context) => CreateChatPage()));
           }),
     );
   }

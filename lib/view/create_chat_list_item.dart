@@ -1,12 +1,11 @@
-import 'package:whats_the_tea/view/channel_room.dart';
+import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:flutter/material.dart';
 
 class CreateChatListItem extends StatefulWidget {
-  final String firstName;
-  final String lastName;
+  final BasicUserInfo friendInfo;
   final bool isSelected;
 
-  CreateChatListItem({Key key, this.firstName, this.lastName, this.isSelected})
+  CreateChatListItem({Key key, this.friendInfo, this.isSelected})
       : super(key: key);
 
   @override
@@ -42,7 +41,7 @@ class CreateChatListItemState extends State<CreateChatListItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.firstName + ' ' + widget.lastName,
+                            widget.friendInfo.firstName + ' ' + widget.friendInfo.lastName,
                             style: TextStyle(
                               fontSize: 20,
                             ),

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:whats_the_tea/view/chat_list_item.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
@@ -7,11 +9,6 @@ import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateChatPage extends StatefulWidget {
-  // TODO put the gesture detector in this class, not create_chat_list_item
-  final List<BasicUserInfo> friends;
-
-  CreateChatPage({Key key, this.friends}) : super(key: key);
-
   @override
   CreateChatPageState createState() => CreateChatPageState();
 }
@@ -25,6 +22,8 @@ class CreateChatPageState extends State<CreateChatPage> {
 
   List<BasicUserInfo> participants = [];
 
+  List<BasicUserInfo> friends = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,11 +33,17 @@ class CreateChatPageState extends State<CreateChatPage> {
                 ? Container(height: 0)
                 : IconButton(
                     icon: const Icon(Icons.check),
-                    onPressed: () {
+                    onPressed: () async {
                       print('create chat!');
-                      participants.add(
-                          userService.getCurrentUserInfo(auth.currentUser.uid));
-                      chatService.createChannel(participants);
+                      participants.add(await userService
+                          .getCurrentUserInfo(auth.currentUser.uid));
+                      var channel =
+                          await chatService.createChannel(participants);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ChannelRoom(channel: channel)));
                     },
                   ))
       ]),
@@ -62,32 +67,50 @@ class CreateChatPageState extends State<CreateChatPage> {
                         ),
                       ),
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.friends.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (!participants
-                                      .contains(widget.friends[index])) {
-                                    participants.add(widget.friends[index]);
-                                    print(participants.length);
-                                  } else {
-                                    participants.remove(widget.friends[index]);
-                                    print(participants.length);
-                                  }
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(auth.currentUser.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            List<dynamic> friends = snapshot.data['friends'];
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: friends.length,
+                                itemBuilder: (context, index) {
+                                  var friend = friends[index];
+                                  BasicUserInfo friendInfo = BasicUserInfo(
+                                      friend['uid'],
+                                      friend['firstName'],
+                                      friend['lastName']);
+
+                                  this.friends.add(friendInfo);
+                                  return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (!participants
+                                              .contains(this.friends[index])) {
+                                            participants
+                                                .add(this.friends[index]);
+                                          } else {
+                                            participants
+                                                .remove(this.friends[index]);
+                                          }
+                                        });
+                                      },
+                                      child: CreateChatListItem(
+                                        friendInfo: friendInfo,
+                                        isSelected: participants
+                                                .contains(this.friends[index])
+                                            ? true
+                                            : false,
+                                      ));
                                 });
-                              },
-                              child: CreateChatListItem(
-                                firstName: widget.friends[index].firstName,
-                                lastName: widget.friends[index].lastName,
-                                isSelected:
-                                    participants.contains(widget.friends[index])
-                                        ? true
-                                        : false,
-                              ));
+                          }
                         }),
                   ],
                 ),
