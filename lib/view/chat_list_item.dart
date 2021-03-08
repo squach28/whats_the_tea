@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
+import 'package:whats_the_tea/model/message.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/model/channel.dart';
@@ -15,6 +16,13 @@ class ChatListItem extends StatefulWidget {
 
 class ChatListItemState extends State<ChatListItem> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Message fetchMostRecentMessage(Channel channel) {
+    List<Message> messages = channel.messages;
+    messages.sort();
+    print(messages.last.channelID);
+    return messages.last;
+  }
 
   String getParticipantName(List<BasicUserInfo> participants) {
     for (BasicUserInfo participant in participants) {
@@ -67,7 +75,7 @@ class ChatListItemState extends State<ChatListItem> {
                               ),
                               Text(
                                 // most recent message content
-                                'messageText',
+                                fetchMostRecentMessage(widget.channel).content,
                                 style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.grey.shade600,
@@ -82,7 +90,8 @@ class ChatListItemState extends State<ChatListItem> {
                 ),
                 Text(
                   // time stamp of most recently sent message
-                  'time',
+                  (fetchMostRecentMessage(widget.channel).sentAt.hour % 12).toString() + ':' +
+                   fetchMostRecentMessage(widget.channel).sentAt.minute.toString(),
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                 ),
               ],

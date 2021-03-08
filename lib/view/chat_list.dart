@@ -101,9 +101,9 @@ class ChatListPageState extends State<ChatListPage> {
                                       for (var message
                                           in channel.data()['messages']) {
                                         Message messageInfo = Message(
+                                            message['senderID'],
                                             message['channelID'],
                                             message['content'],
-                                            message['senderID'],
                                             message['sentAt'].toDate());
                                         messages.add(messageInfo); // add message info to list of messages
                                       }

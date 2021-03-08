@@ -1,5 +1,5 @@
 // represents a message sent by a user
-class Message {
+class Message extends Comparable <Message>{
   String senderID;
   String channelID;
   String content;
@@ -21,4 +21,8 @@ class Message {
         'content': content,
         'sentAt': sentAt,
       };
+
+  int compareTo(Message other) {
+    return sentAt.compareTo(other.sentAt);
+  }
 }

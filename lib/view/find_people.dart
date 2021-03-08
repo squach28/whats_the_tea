@@ -135,7 +135,7 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                           });
                                     }
 
-                                    return Text('loading');
+                                    return Center(child: Text('loading'));
                                   });
 
                          

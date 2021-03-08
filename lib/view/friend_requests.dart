@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/view/friend_request_item.dart';
 
 // page that contains the list of friend requests a user has
@@ -45,7 +46,11 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                                 itemCount: friendRequests.length,
                                 itemBuilder: (context, index) {
                                   var friendRequest = friendRequests[index];
-                                  var friendRequestInfo = friendRequest.fromJson();
+                                  var friendRequestInfo = BasicUserInfo(
+                                    friendRequest['uid'],
+                                    friendRequest['firstName'],
+                                    friendRequest['lastName']
+                                  );
                                   return FriendRequestItem(
                                       friendRequestInfo: friendRequestInfo);
                                 });

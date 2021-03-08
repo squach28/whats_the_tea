@@ -56,6 +56,8 @@ class UserService {
   // accepts a friend request
   // takes the user who sent the friend request as a param
   void acceptFriendRequest(BasicUserInfo friendRequest) async {
+
+    BasicUserInfo currentUserInfo = await getUserInfo(auth.currentUser.uid);
     // remove the user from the list of friend requests
     await firestore.collection('users').doc(auth.currentUser.uid).update({
       'friendRequests': FieldValue.arrayRemove([friendRequest.toJson()])
@@ -67,7 +69,7 @@ class UserService {
     });
 
     await firestore.collection('users').doc(friendRequest.uid).update({
-      'friends': FieldValue.arrayUnion([friendRequest.toJson()])
+      'friends': FieldValue.arrayUnion([currentUserInfo.toJson()])
     });
   }
 
