@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/model/channel.dart';
+import 'package:whats_the_tea/model/message.dart';
+import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/service/user_service.dart';
+import 'package:whats_the_tea/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// page that has a list of friends to create a chat with
 class CreateChatPage extends StatefulWidget {
-  final List<BasicUserInfo> friends;
-
-  CreateChatPage({Key key, this.friends}) : super(key: key);
-
   @override
   CreateChatPageState createState() => CreateChatPageState();
 }
@@ -18,16 +20,37 @@ class CreateChatPageState extends State<CreateChatPage> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    print(widget.friends.length);
-  }
+  final ChatService chatService = ChatService();
+
+  List<BasicUserInfo> participants = [];
+
+  List<BasicUserInfo> friends = [];
+
+  bool chatExists = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Create New Chat'), actions: <Widget>[
+        Container(
+            child: participants.isEmpty
+                ? Container(height: 0)
+                : IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: () async {
+                      participants.add(await userService
+                          .getUserInfo(auth.currentUser.uid));
+                      
+                      var channel =
+                          await chatService.createChannel(participants);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ChannelRoom(channel: channel)));
+                    },
+                  ))
+      ]),
       body: Container(
         child: SafeArea(
             minimum: EdgeInsets.all(5.0),
@@ -48,26 +71,58 @@ class CreateChatPageState extends State<CreateChatPage> {
                         ),
                       ),
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.friends.length,
-                        itemBuilder: (context, index) {
-                          return CreateChatListItem(
-                            firstName: widget.friends[index]
-                                .firstName, //friends[index].firstName,
-                            lastName: widget.friends[index]
-                                .lastName, //friends[index].lastName,
-                          );
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(auth.currentUser.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            List<dynamic> friends = snapshot.data['friends']; // list of friends the user can create a chat with
+                            List<dynamic> channelsQuery = snapshot.data['channels']; // the chats the user already has
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: friends.length,
+                                itemBuilder: (context, index) {
+
+                                  var friend = friends[index];
+                                  BasicUserInfo friendInfo = BasicUserInfo(
+                                      friend['uid'],
+                                      friend['firstName'],
+                                      friend['lastName']);
+
+                                  this.friends.add(friendInfo);
+                                  return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (!participants
+                                              .contains(this.friends[index])) {
+                                            participants
+                                                .add(this.friends[index]);
+                                          } else {
+                                            participants
+                                                .remove(this.friends[index]);
+                                          }
+                                        });
+                                      },
+                                      child: CreateChatListItem(
+                                        friendInfo: friendInfo,
+                                        isSelected: participants
+                                                .contains(this.friends[index])
+                                            ? true
+                                            : false,
+                                      ));
+                                });
+                          }
                         }),
                   ],
                 ),
               )),
             ])),
       ),
-      // search bar to add person
-      // container to show people being added
-      // container for the list of people to add
     );
   }
 }

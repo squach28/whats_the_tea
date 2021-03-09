@@ -4,5 +4,6 @@ enum SignInResult {
   INVALID_EMAIL,
   USER_NOT_FOUND,
   WRONG_PASSWORD,
+  FAIL,
   SUCCESS,
 }

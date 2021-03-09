@@ -4,6 +4,7 @@ import 'package:whats_the_tea/service/auth_service.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/view/home_page.dart';
 
+// sign up page
 class SignUpPage extends StatefulWidget {
   SignUpPage({
     Key key,

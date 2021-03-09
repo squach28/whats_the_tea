@@ -26,6 +26,7 @@ dependencies:
   firebase_core: '^0.7.0'
   firebase_auth: '^0.20.0+1'
   cloud_firestore: '^0.16.0'
+  scrollable_positioned_list: ^0.1.10
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,8 +49,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+      - assets/tyler.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -69,6 +70,18 @@ flutter:
           - asset: fonts/Caveat-Regular.ttf
           - asset: fonts/Caveat-Medium.ttf
           - asset: fonts/Caveat-Bold.ttf
+
+      - family: OpenSans
+        fonts:
+        - asset: fonts/OpenSans-Bold.ttf
+        - asset: fonts/OpenSans-BoldItalic.ttf
+        - asset: fonts/OpenSans-ExtraBold.ttf
+        - asset: fonts/OpenSans-BoldItalic.ttf
+        - asset: fonts/OpenSans-Italic.ttf
+        - asset: fonts/OpenSans-LightItalic.ttf
+        - asset: fonts/OpenSans-Regular.ttf
+        - asset: fonts/OpenSans-SemiBold.ttf
+        - asset: fonts/OpenSans-SemiBoldItalic.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -16,6 +16,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: const Color(0xffece6ff),
+        accentColor: const Color(0xff8060e6),
+        fontFamily: 'OpenSans',
+      ),
       home:
           FirebaseAuth.instance.currentUser != null ? HomePage() : SignInPage(),
     );

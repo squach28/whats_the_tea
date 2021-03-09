@@ -1,16 +1,14 @@
-import 'package:whats_the_tea/model/user.dart';
+import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whats_the_tea/model/channel.dart';
 import 'package:whats_the_tea/model/message.dart';
 
 class ChatService {
-  
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  // sends a message into the specified channel
   Future<void> sendMessage(String content, String senderID, String channelID) {
-    // create a new channel if no messages have been sent
-    // else send to the channel between the users
-    // user needs a reference of the room and the ids
-
+    // create the message with the senderID, content, and channelID
     Message message = Message(
       senderID,
       channelID,
@@ -18,30 +16,44 @@ class ChatService {
       DateTime.now(),
     );
 
-    return firestore
-        .collection('channels')
-        .doc(channelID)
-        .collection('messages')
-        .add(message.toJson());
+    return firestore.collection('channels').doc(channelID).update({
+      'messages': FieldValue.arrayUnion([message.toJson()])
+    });
   }
 
   // creates a chat channel with a list of participants
   // chanel id will be added to both participants' lists of chat channels
-  Future<void> createChannel(List<User> participants) async {
-    String channelID = firestore.collection('channels').doc().id;
-
-    List<String> channelIDAsList = [channelID];
-
-    CollectionReference users = firestore.collection('users');
-
-    for (User participant in participants) {
-      await users.where('uid', isEqualTo: participant.uid).get().then((value) {
-        for (QueryDocumentSnapshot queries in value.docs) {
-          queries.reference
-              .update({'channels': FieldValue.arrayUnion(channelIDAsList)});
-        }
+  Future<Channel> createChannel(List<BasicUserInfo> participants) async {
+    DocumentReference firestoreChannel = firestore
+        .collection('channels')
+        .doc(); // create a new document for the channel
+    String channelID =
+        firestoreChannel.id; // store the newly created document id
+    CollectionReference users =
+        firestore.collection('users'); // reference to users
+    CollectionReference channels =
+        firestore.collection('channels'); // reference to channels
+    // add the newly created channel to the participants' list of channels
+    for (BasicUserInfo participant in participants) {
+      users.doc(participant.uid).update({
+        'channels': FieldValue.arrayUnion([channelID])
       });
     }
-    return channelID;
+
+    List<Map<String, dynamic>> participantsAsJson =
+        []; // list to store the participants in json format
+    // format all participants in json format
+    for (var participant in participants) {
+      participantsAsJson.add(participant.toJson());
+    }
+
+    // add channel to collection of channels
+    channels.doc(channelID).set({
+      'channelID': channelID,
+      'participants': participantsAsJson,
+      'messages': []
+    });
+    return Channel(
+        channelID, participants, []); // return the newly created channel
   }
 }
