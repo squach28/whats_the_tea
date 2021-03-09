@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
+import 'package:whats_the_tea/model/channel.dart';
 import 'package:whats_the_tea/model/user.dart' as m;
 
 class UserService {
@@ -50,7 +51,7 @@ class UserService {
 
     await users
         .doc(auth.currentUser.uid)
-        .update({'friendRequestsSent': FieldValue.arrayUnion([])});
+        .update({'friendRequestsSent': FieldValue.arrayUnion([recipient.toJson()])});
   }
 
   // accepts a friend request
@@ -61,6 +62,10 @@ class UserService {
     // remove the user from the list of friend requests
     await firestore.collection('users').doc(auth.currentUser.uid).update({
       'friendRequests': FieldValue.arrayRemove([friendRequest.toJson()])
+    });
+
+        await firestore.collection('users').doc(friendRequest.uid).update({
+      'friendRequestsSent': FieldValue.arrayRemove([currentUserInfo.toJson()])
     });
 
     // add the user to the list of friends

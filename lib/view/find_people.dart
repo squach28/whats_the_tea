@@ -70,6 +70,8 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                         ConnectionState.done) {
                                       List<BasicUserInfo> friends = [];
                                       List<BasicUserInfo> friendRequests = [];
+                                      List<BasicUserInfo> friendRequestsSent =
+                                          [];
                                       Map<String, dynamic> data =
                                           snapshot.data.data();
                                       for (var friend in data['friends']) {
@@ -89,9 +91,17 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                                 friendRequest['firstName'],
                                                 friendRequest['lastName']);
                                         friendRequests.add(friendRequestInfo);
-                                        print('friends: ' +
-                                            friends.length.toString());
-                                        print(friendRequests.length.toString());
+                                      }
+
+                                      for (var friendRequestSent
+                                          in data['friendRequestsSent']) {
+                                        BasicUserInfo friendRequestSentInfo =
+                                            BasicUserInfo(
+                                                friendRequestSent['uid'],
+                                                friendRequestSent['firstName'],
+                                                friendRequestSent['lastName']);
+                                        friendRequestsSent
+                                            .add(friendRequestSentInfo);
                                       }
 
                                       return ListView.builder(
@@ -121,6 +131,16 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                                     FriendStatus.FRIENDS;
                                               }
 
+                                              if(friendRequests.contains(user)) {
+                                                friendStatus = FriendStatus.INCOMING_FRIEND_REQUEST;
+                                              }
+
+                                              if (friendRequestsSent
+                                                  .contains(user)) {
+                                                friendStatus = FriendStatus
+                                                    .FRIEND_REQUEST_SENT;
+                                              }
+
                                               BasicUserInfo userInfo =
                                                   BasicUserInfo(
                                                 ds.data()['uid'],
@@ -135,10 +155,8 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                           });
                                     }
 
-                                    return Center(child: Text('loading'));
+                                    return Center(child: Text('Loading (☞ﾟ∀ﾟ)☞'));
                                   });
-
-                         
                             }
                           }),
                     ]))));

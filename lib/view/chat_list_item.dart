@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/model/message.dart';
+import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:flutter/material.dart';
 import 'package:whats_the_tea/model/channel.dart';
+import 'package:intl/intl.dart';
+
 // list item that represents a channel
 class ChatListItem extends StatefulWidget {
   final Channel channel; // associated channel for the chat list item
@@ -17,10 +20,12 @@ class ChatListItem extends StatefulWidget {
 class ChatListItemState extends State<ChatListItem> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  final UserService userService = UserService();
+
   Message fetchMostRecentMessage(Channel channel) {
     List<Message> messages = channel.messages;
     messages.sort();
-    print(messages.last.channelID);
+    print(messages.last.sentAt.toString());
     return messages.last;
   }
 
@@ -29,6 +34,46 @@ class ChatListItemState extends State<ChatListItem> {
       if (participant.uid != auth.currentUser.uid) {
         return participant.firstName + ' ' + participant.lastName;
       }
+    }
+    return '';
+  }
+
+  Widget formatMessageTime(Message message) {
+    return Text(
+      // time stamp of most recently sent message
+      DateFormat('h:mm a')
+          .format(fetchMostRecentMessage(widget.channel).sentAt),
+
+      style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+    );
+  }
+
+  Widget formatMessageContent(Channel channel) {
+    Map<String, BasicUserInfo> participantsInfo = {};
+    for (var participant in channel.participants) {
+      participantsInfo[participant.uid] = participant;
+    }
+
+    Message mostRecentMessage = fetchMostRecentMessage(channel);
+
+    if (mostRecentMessage.senderID == auth.currentUser.uid) {
+      return Text(
+        'You: ' + mostRecentMessage.content,
+        style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.normal),
+      );
+    } else {
+      return Text(
+        participantsInfo[mostRecentMessage.senderID].firstName +
+            ': ' +
+            mostRecentMessage.content,
+        style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.normal),
+      );
     }
   }
 
@@ -73,14 +118,8 @@ class ChatListItemState extends State<ChatListItem> {
                               SizedBox(
                                 height: 6,
                               ),
-                              Text(
-                                // most recent message content
-                                fetchMostRecentMessage(widget.channel).content,
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.normal),
-                              ),
+                              // most recent message content
+                              formatMessageContent(widget.channel),
                             ],
                           ),
                         ),
@@ -88,12 +127,19 @@ class ChatListItemState extends State<ChatListItem> {
                     ],
                   ),
                 ),
+                formatMessageTime(fetchMostRecentMessage(widget.channel)),
+                /*
                 Text(
                   // time stamp of most recently sent message
-                  (fetchMostRecentMessage(widget.channel).sentAt.hour % 12).toString() + ':' +
-                   fetchMostRecentMessage(widget.channel).sentAt.minute.toString(),
+                  (fetchMostRecentMessage(widget.channel).sentAt.hour % 12)
+                          .toString() +
+                      ':' +
+                      fetchMostRecentMessage(widget.channel)
+                          .sentAt
+                          .minute
+                          .toString(),
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                ),
+                ), */
               ],
             ),
           ),

@@ -23,6 +23,8 @@ class ChannelRoomState extends State<ChannelRoom> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  final ScrollController scrollController = ScrollController();
+
   final TextEditingController messageController =
       TextEditingController(); // controller for the text field sending messages
 
@@ -67,43 +69,50 @@ class ChannelRoomState extends State<ChannelRoom> {
                     }
                     print(messages.length);
                     return Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: SingleChildScrollView(child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          messages.sort();
-                          var message = messages.elementAt(index);
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: SingleChildScrollView(
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                controller: scrollController,
+                                itemCount: messages.length,
+                                itemBuilder: (context, index) {
+                                  messages.sort();
+                                  var message = messages.elementAt(index);
 
-                          return Container(
-                              padding: EdgeInsets.only(
-                                  top: 2.0, left: 10.0, right: 10.0),
-                              alignment:
-                                  message.senderID == auth.currentUser.uid
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.0, color:  message.senderID == auth.currentUser.uid
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.grey[200]),
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      color: message.senderID == auth.currentUser.uid
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.grey[200],),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(message.content,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 17.0,
-                                      )))));
-                        })));
+                                  return Container(
+                                      padding: EdgeInsets.only(
+                                          top: 2.0, left: 10.0, right: 10.0),
+                                      alignment: message.senderID ==
+                                              auth.currentUser.uid
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.0,
+                                                color: message.senderID ==
+                                                        auth.currentUser.uid
+                                                    ? Theme.of(context)
+                                                        .primaryColor
+                                                    : Colors.grey[200]),
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            color: message.senderID ==
+                                                    auth.currentUser.uid
+                                                ? Theme.of(context).primaryColor
+                                                : Colors.grey[200],
+                                          ),
+                                          child: Padding(
+                                              padding: EdgeInsets.all(10.0),
+                                              child: Text(message.content,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 17.0,
+                                                  )))));
+                                })));
                   }
                 }),
-
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
@@ -158,6 +167,7 @@ class ChannelRoomState extends State<ChannelRoom> {
                         print('message sent');
                         messageController
                             .clear(); // clear the text field when message is sent
+                            
                       },
                       child: Icon(Icons.send, color: Colors.white, size: 18),
                       backgroundColor: Theme.of(context).accentColor,

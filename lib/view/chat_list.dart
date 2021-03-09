@@ -48,7 +48,7 @@ class ChatListPageState extends State<ChatListPage> {
                           left: 10.0, right: 10.0, bottom: 20.0),
                       child: TextField( // search text field
                         decoration: InputDecoration(
-                          fillColor: Colors.grey,
+                          fillColor: Colors.grey[100],
                           filled: true,
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Search',

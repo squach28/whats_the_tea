@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whats_the_tea/model/channel.dart';
+import 'package:whats_the_tea/model/message.dart';
 import 'package:whats_the_tea/view/channel_room.dart';
 import 'package:whats_the_tea/view/create_chat_list_item.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
@@ -24,6 +26,8 @@ class CreateChatPageState extends State<CreateChatPage> {
 
   List<BasicUserInfo> friends = [];
 
+  bool chatExists = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +38,9 @@ class CreateChatPageState extends State<CreateChatPage> {
                 : IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () async {
-                      print('create chat!');
                       participants.add(await userService
                           .getUserInfo(auth.currentUser.uid));
+                      
                       var channel =
                           await chatService.createChannel(participants);
                       Navigator.pushReplacement(
@@ -76,12 +80,14 @@ class CreateChatPageState extends State<CreateChatPage> {
                           if (!snapshot.hasData) {
                             return Center(child: CircularProgressIndicator());
                           } else {
-                            List<dynamic> friends = snapshot.data['friends'];
+                            List<dynamic> friends = snapshot.data['friends']; // list of friends the user can create a chat with
+                            List<dynamic> channelsQuery = snapshot.data['channels']; // the chats the user already has
                             return ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: friends.length,
                                 itemBuilder: (context, index) {
+
                                   var friend = friends[index];
                                   BasicUserInfo friendInfo = BasicUserInfo(
                                       friend['uid'],

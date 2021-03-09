@@ -41,6 +41,10 @@ class UserListItemState extends State<UserListItem> {
           return Text('Friend Request Sent!');
         }
 
+        case FriendStatus.INCOMING_FRIEND_REQUEST: {
+          return Text('Incoming Friend Request!');
+        }
+
         case FriendStatus.FRIENDS: {
           return Text('Friend');
         }
