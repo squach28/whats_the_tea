@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'OpenSans',
       ),
       home:
-          FirebaseAuth.instance.currentUser != null ? HomePage() : SignInPage(),
+        FirebaseAuth.instance.currentUser != null ? HomePage() : SignInPage(),
+
     );
   }
 }

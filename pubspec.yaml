@@ -26,7 +26,6 @@ dependencies:
   firebase_core: '^0.7.0'
   firebase_auth: '^0.20.0+1'
   cloud_firestore: '^0.16.0'
-  scrollable_positioned_list: ^0.1.10
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -49,8 +48,6 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-      - assets/tyler.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
