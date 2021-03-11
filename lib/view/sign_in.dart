@@ -16,6 +16,8 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final auth = AuthService();
+  final formKey = GlobalKey<FormState>();
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   FocusNode emailFocus = FocusNode();
@@ -177,8 +179,18 @@ class _SignInPageState extends State<SignInPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 25.0, bottom: 10.0),
+                    child: Text("What's the Tea",
+                        style: TextStyle(
+                        fontSize: 50.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Caveat'),),
+                  ),
+                ),
                 Padding(
-                  padding: EdgeInsets.only(top: 150.0, bottom: 10.0),
+                  padding: EdgeInsets.only(top: 100.0, bottom: 10.0),
                   child: Text(
                     'Sign In',
                     style: TextStyle(
@@ -187,58 +199,79 @@ class _SignInPageState extends State<SignInPage> {
                         fontFamily: 'Caveat'),
                   ),
                 ),
-                Column(children: <Widget>[
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                    child: TextField(
-                      focusNode: emailFocus,
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        prefixIcon: Icon(Icons.email),
-                        hintText: 'Email',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                    child: TextField(
-                      focusNode: passwordFocus,
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        prefixIcon: Icon(Icons.lock),
-                        hintText: 'Password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                Form(
+                    key: formKey,
+                    autovalidateMode: autoValidateMode,
+                    child: Column(children: <Widget>[
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                            primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                        child: TextFormField(
+                          focusNode: emailFocus,
+                          controller: emailController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Email is empty';
+                            }
+                            if (!validateEmail(value)) {
+                              return 'The email is not valid';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            
+                          },
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            prefixIcon: Icon(Icons.email),
+                            hintText: 'Email',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 46, 25, 118),
+                                  width: 2.0),
+                            ),
+                          ),
                         ),
                       ),
-                      obscureText: true,
-                    ),
-                  ),
-                ]),
+                      SizedBox(height: 10.0),
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                            primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                        child: TextFormField(
+                          focusNode: passwordFocus,
+                          controller: passwordController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Password must be filled out';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            prefixIcon: Icon(Icons.lock),
+                            hintText: 'Password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 46, 25, 118),
+                                  width: 2.0),
+                            ),
+                          ),
+                          obscureText: true,
+                        ),
+                      ),
+                    ])),
                 SizedBox(height: 30.0),
                 SizedBox(
                   width: double.infinity,
@@ -261,17 +294,23 @@ class _SignInPageState extends State<SignInPage> {
                                 borderRadius: new BorderRadius.circular(25.0))),
                       ),
                       onPressed: () async {
-                        bool signInSuccess = await signIn();
-                        if (signInSuccess) {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      HomePage()));
+                        if (formKey.currentState.validate()) {
+                          bool signInSuccess = await signIn();
+                          if (signInSuccess) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        HomePage()));
+                          }
+                        } else {
+                          setState(() {
+                            autoValidateMode = AutovalidateMode.always;
+                          });
                         }
                       }),
                 ),
-                SizedBox(height: 40.0),
+                SizedBox(height: 20.0),
                 TextButton(
                     child: Text("Don't have an Account? Sign up here"),
                     onPressed: () {

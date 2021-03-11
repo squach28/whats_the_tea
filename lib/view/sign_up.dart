@@ -24,6 +24,8 @@ class SignUpPageState extends State<SignUpPage> {
   final auth = AuthService(); // service to handle authentication
   final userService = UserService(); // service to handle firestore requests
 
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
+
   // validates an inputted string and returns true if the string is a valid email
   // returns false if the inputted string is not a valid email
   bool validateEmail(String email) {
@@ -233,6 +235,7 @@ class SignUpPageState extends State<SignUpPage> {
             ),
             Form(
                 key: formKey,
+                autovalidateMode: autoValidateMode,
                 child: Column(children: <Widget>[
                   Theme(
                     data: Theme.of(context).copyWith(
@@ -401,42 +404,48 @@ class SignUpPageState extends State<SignUpPage> {
                       obscureText: true,
                     ),
                   ),
+                  SizedBox(height: 15.0),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.0,
+                    child: OutlinedButton(
+                        // sign up button
+                        child: Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color.fromARGB(255, 255, 154, 162)),
+                          elevation: MaterialStateProperty.all<double>(10.0),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(25.0))),
+                        ),
+                        onPressed: () async {
+                          if (formKey.currentState.validate()) {
+                            bool signUpSuccess = await signUp();
+                            if (signUpSuccess) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          HomePage()));
+                            }
+                          } else {
+                            setState(() {
+                              autoValidateMode = AutovalidateMode.always;
+                            });
+                          }
+                        }), // end of onPressed
+                  ),
                 ])),
-            SizedBox(height: 30.0),
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: OutlinedButton(
-                  // sign up button
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 255, 154, 162)),
-                    elevation: MaterialStateProperty.all<double>(10.0),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(25.0))),
-                  ),
-                  onPressed: () async {
-                    if (formKey.currentState.validate()) {
-                      bool signUpSuccess = await signUp();
-                      if (signUpSuccess) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) => HomePage()));
-                      }
-                    }
-                  }), // end of onPressed
-            ),
-            SizedBox(height: 40.0),
+            SizedBox(height: 10.0),
             TextButton(
                 // button to navigate to sign up page TODO make it look pretty
                 child: Text("Already have an account? Sign in here"),
