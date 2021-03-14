@@ -29,7 +29,7 @@ class ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffece6ff),
+      backgroundColor: Colors.white70,
       body: SafeArea(
           minimum: EdgeInsets.only(left: 5.0, right: 5.0),
           child: Padding(
@@ -131,9 +131,11 @@ class ChatListPageState extends State<ChatListPage> {
                                           return SizedBox(height:0, width: 0);
                                         } else {
                                           // chat list item with channel info included
-                                        return ChatListItem( 
+                                        return Padding(
+                                          padding: EdgeInsets.only(top: 3.0, bottom: 3.0),child: ChatListItem( 
+                                          
                                           channel: key
-                                        );
+                                        ));
                                       }
                                       }
                                     );
@@ -145,23 +147,19 @@ class ChatListPageState extends State<ChatListPage> {
                 ),
               ))),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
           child: Container(
             width: 60,
             height: 60,
             child: IconTheme(
-              data: IconThemeData(color: Colors.black),
+              data: IconThemeData(color: Colors.white),
               child: Icon(Icons.add),
             ),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xffa88beb),
-                    const Color(0xfff8ceec),
-                  ]),
+
             ),
+
           ),
           onPressed: () async {
             print('pressed!');

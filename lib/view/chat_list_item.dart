@@ -85,8 +85,10 @@ class ChatListItemState extends State<ChatListItem> {
             return ChannelRoom(channel: widget.channel);
           }));
         },
-        child: Card(
-          color: const Color(0xfffdcece),
+        child: Container(
+            child: Card(
+              elevation: 10.0,
+          color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
@@ -128,21 +130,9 @@ class ChatListItemState extends State<ChatListItem> {
                   ),
                 ),
                 formatMessageTime(fetchMostRecentMessage(widget.channel)),
-                /*
-                Text(
-                  // time stamp of most recently sent message
-                  (fetchMostRecentMessage(widget.channel).sentAt.hour % 12)
-                          .toString() +
-                      ':' +
-                      fetchMostRecentMessage(widget.channel)
-                          .sentAt
-                          .minute
-                          .toString(),
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                ), */
               ],
             ),
           ),
-        ));
+        )));
   }
 }

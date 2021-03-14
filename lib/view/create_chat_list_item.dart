@@ -17,7 +17,7 @@ class CreateChatListItemState extends State<CreateChatListItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xfffdcece),
+      color: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),

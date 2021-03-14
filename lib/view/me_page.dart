@@ -23,7 +23,7 @@ class MePageState extends State<MePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffece6ff),
+      backgroundColor: Colors.white70,
       body: SafeArea(
           minimum: EdgeInsets.all(5.0),
           child: Center(
@@ -36,10 +36,9 @@ class MePageState extends State<MePage> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 20.0),
                         child: CircleAvatar(
-                          radius: 70,
-                          backgroundColor: Colors.white,
-                          child: Text('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧')
-                        ),
+                            radius: 70,
+                            backgroundColor: Colors.white,
+                            child: Text('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧')),
                       ),
                       Text(authService.auth.currentUser.displayName,
                           style: TextStyle(fontSize: 25.0)),
@@ -61,16 +60,15 @@ class MePageState extends State<MePage> {
                                 child: Text(
                                   'Friends',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20.0,
                                   ),
                                 ),
                                 style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<
-                                          Color>(
-                                      // Color.fromARGB(255, 255, 154, 162)),
-                                      const Color(0xff8060e6)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Theme.of(context).primaryColor),
                                   elevation:
                                       MaterialStateProperty.all<double>(10.0),
                                   shape: MaterialStateProperty.all<
@@ -104,7 +102,7 @@ class MePageState extends State<MePage> {
                                 child: friendRequests.isEmpty
                                     ? Text('Friends',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20.0,
                                         ))
@@ -114,23 +112,22 @@ class MePageState extends State<MePage> {
                                         children: [
                                             Text('Friends',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20.0,
                                                 )),
                                             SizedBox(width: 10.0),
                                             Text('!',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    )),
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20.0,
+                                                )),
                                           ]),
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          Theme.of(context).accentColor),
+                                          Theme.of(context).primaryColor),
                                   elevation:
                                       MaterialStateProperty.all<double>(10.0),
                                   shape: MaterialStateProperty.all<
@@ -163,7 +160,7 @@ class MePageState extends State<MePage> {
                         child: Text(
                           'Find People',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
                           ),
@@ -178,7 +175,7 @@ class MePageState extends State<MePage> {
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               // Color.fromARGB(255, 255, 154, 162)),
-                              const Color(0xff8060e6)),
+                              Theme.of(context).primaryColor),
                           elevation: MaterialStateProperty.all<double>(10.0),
                           shape: MaterialStateProperty.all<OutlinedBorder>(
                               RoundedRectangleBorder(
@@ -195,7 +192,7 @@ class MePageState extends State<MePage> {
                         child: Text(
                           'Settings',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
                           ),
@@ -210,7 +207,7 @@ class MePageState extends State<MePage> {
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               // Color.fromARGB(255, 255, 154, 162)),
-                              const Color(0xff8060e6)),
+                              Theme.of(context).primaryColor),
                           elevation: MaterialStateProperty.all<double>(10.0),
                           shape: MaterialStateProperty.all<OutlinedBorder>(
                               RoundedRectangleBorder(
@@ -227,7 +224,7 @@ class MePageState extends State<MePage> {
                           child: Text(
                             'Sign Out',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 20.0,
                             ),
@@ -235,7 +232,7 @@ class MePageState extends State<MePage> {
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 // Color.fromARGB(255, 255, 154, 162)),
-                                const Color(0xff8060e6)),
+                                Theme.of(context).primaryColor),
                             elevation: MaterialStateProperty.all<double>(10.0),
                             shape: MaterialStateProperty.all<OutlinedBorder>(
                                 RoundedRectangleBorder(
