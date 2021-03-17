@@ -29,7 +29,7 @@ class CreateChatListItemState extends State<CreateChatListItem> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    //backgroundImage: NetworkImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(widget.friendInfo.profilePictureURL),
                     maxRadius: 30,
                   ),
                   SizedBox(

@@ -33,13 +33,27 @@ class MePageState extends State<MePage> {
                   padding: EdgeInsets.only(top: 50.0, bottom: 50.0),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 20.0),
-                        child: CircleAvatar(
-                            radius: 70,
-                            backgroundColor: Colors.white,
-                            child: Text('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧')),
-                      ),
+                      StreamBuilder(
+                          stream: auth.userChanges(),
+                          builder: (context, snapshot) {
+                            if(!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            }
+                            User currentUser = snapshot.data;
+                            print('photoURL: ' + currentUser.photoURL);
+                            return Padding(
+                                padding: EdgeInsets.only(bottom: 20.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    userService.uploadImage();
+                                  },
+                                  child: CircleAvatar(
+                                      radius: 70,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: NetworkImage(
+                                          currentUser.photoURL)),
+                                ));
+                          }),
                       Text(authService.auth.currentUser.displayName,
                           style: TextStyle(fontSize: 25.0)),
                     ],

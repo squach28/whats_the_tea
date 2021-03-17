@@ -70,7 +70,7 @@ class UserListItemState extends State<UserListItem> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    //backgroundImage: NetworkImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(widget.userInfo.profilePictureURL),
                     maxRadius: 30,
                   ),
                   SizedBox(

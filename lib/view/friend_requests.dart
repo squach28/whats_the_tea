@@ -49,7 +49,8 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                                   var friendRequestInfo = BasicUserInfo(
                                     friendRequest['uid'],
                                     friendRequest['firstName'],
-                                    friendRequest['lastName']
+                                    friendRequest['lastName'],
+                                    friendRequest['profilePictureURL']
                                   );
                                   return FriendRequestItem(
                                       friendRequestInfo: friendRequestInfo);

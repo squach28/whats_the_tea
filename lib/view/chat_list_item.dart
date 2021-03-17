@@ -24,9 +24,13 @@ class ChatListItemState extends State<ChatListItem> {
 
   Message fetchMostRecentMessage(Channel channel) {
     List<Message> messages = channel.messages;
-    messages.sort();
-    print(messages.last.sentAt.toString());
-    return messages.last;
+    print('messages size: ' + messages.length.toString());
+    if (messages.length == 0) {
+      return null;
+    } else {
+      messages.sort();
+      return messages.last;
+    }
   }
 
   String getParticipantName(List<BasicUserInfo> participants) {
@@ -38,14 +42,23 @@ class ChatListItemState extends State<ChatListItem> {
     return '';
   }
 
+    String getParticipantInfo(List<BasicUserInfo> participants) {
+    for (BasicUserInfo participant in participants) {
+      if (participant.uid != auth.currentUser.uid) {
+        return participant.profilePictureURL;
+      }
+    }
+    return '';
+  }
+
   Widget formatMessageTime(Message message) {
-    return Text(
+    return fetchMostRecentMessage(widget.channel) != null ? Text(
       // time stamp of most recently sent message
       DateFormat('h:mm a')
           .format(fetchMostRecentMessage(widget.channel).sentAt),
 
       style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-    );
+    ) : SizedBox(width: 0, height: 0);
   }
 
   Widget formatMessageContent(Channel channel) {
@@ -55,8 +68,9 @@ class ChatListItemState extends State<ChatListItem> {
     }
 
     Message mostRecentMessage = fetchMostRecentMessage(channel);
-
-    if (mostRecentMessage.senderID == auth.currentUser.uid) {
+    if(mostRecentMessage == null) {
+      return SizedBox(height: 0, width: 0);
+    } else if (mostRecentMessage.senderID == auth.currentUser.uid) {
       return Text(
         'You: ' + mostRecentMessage.content,
         style: TextStyle(
@@ -87,7 +101,7 @@ class ChatListItemState extends State<ChatListItem> {
         },
         child: Container(
             child: Card(
-              elevation: 10.0,
+          elevation: 10.0,
           color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -100,7 +114,7 @@ class ChatListItemState extends State<ChatListItem> {
                   child: Row(
                     children: <Widget>[
                       CircleAvatar(
-                        //backgroundImage: NetworkImage(widget.imageUrl),
+                        backgroundImage: NetworkImage(getParticipantInfo(widget.channel.participants)), // TODO make it fetch profile picture of most recent person that sent a message
                         maxRadius: 30,
                       ),
                       SizedBox(

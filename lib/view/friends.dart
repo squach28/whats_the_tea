@@ -105,6 +105,7 @@ class FriendsPageState extends State<FriendsPage> {
                                     friendRequest['uid'],
                                     friendRequest['firstName'],
                                     friendRequest['lastName'],
+                                    friendRequest['profilePictureURL'],
                                   );
                                   return UserListItem(
                                       userInfo: friendRequestInfo,
