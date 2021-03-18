@@ -166,14 +166,7 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                Color.fromARGB(255, 250, 208, 196),
-                Color.fromARGB(255, 241, 167, 241)
-              ])),
+          color: Theme.of(context).primaryColor,
           child: SafeArea(
             minimum: EdgeInsets.all(15.0),
             child: Column(
@@ -182,11 +175,13 @@ class _SignInPageState extends State<SignInPage> {
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(top: 25.0, bottom: 10.0),
-                    child: Text("What's the Tea",
-                        style: TextStyle(
-                        fontSize: 50.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Caveat'),),
+                    child: Text(
+                      "What's the Tea",
+                      style: TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Caveat'),
+                    ),
                   ),
                 ),
                 Padding(
@@ -205,7 +200,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(children: <Widget>[
                       Theme(
                         data: Theme.of(context).copyWith(
-                            primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                            primaryColor: Theme.of(context).accentColor),
                         child: TextFormField(
                           focusNode: emailFocus,
                           controller: emailController,
@@ -218,9 +213,7 @@ class _SignInPageState extends State<SignInPage> {
                             }
                             return null;
                           },
-                          onChanged: (value) {
-                            
-                          },
+                          onChanged: (value) {},
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -233,7 +226,7 @@ class _SignInPageState extends State<SignInPage> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25.0),
                               borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 46, 25, 118),
+                                  color: Theme.of(context).accentColor,
                                   width: 2.0),
                             ),
                           ),
@@ -242,7 +235,7 @@ class _SignInPageState extends State<SignInPage> {
                       SizedBox(height: 10.0),
                       Theme(
                         data: Theme.of(context).copyWith(
-                            primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                            primaryColor: Theme.of(context).accentColor),
                         child: TextFormField(
                           focusNode: passwordFocus,
                           controller: passwordController,
@@ -264,7 +257,7 @@ class _SignInPageState extends State<SignInPage> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25.0),
                               borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 46, 25, 118),
+                                  color: Theme.of(context).accentColor,
                                   width: 2.0),
                             ),
                           ),
@@ -287,7 +280,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(255, 255, 154, 162)),
+                            Theme.of(context).accentColor),
                         elevation: MaterialStateProperty.all<double>(10.0),
                         shape: MaterialStateProperty.all<OutlinedBorder>(
                             RoundedRectangleBorder(
@@ -312,7 +305,8 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 SizedBox(height: 20.0),
                 TextButton(
-                    child: Text("Don't have an Account? Sign up here"),
+                    child: Text("Don't have an Account? Sign up here!",
+                        style: TextStyle(fontSize: 15.0, color: Colors.black)),
                     onPressed: () {
                       if (emailFocus.hasFocus) {
                         emailFocus.unfocus();

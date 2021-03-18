@@ -185,7 +185,6 @@ class SignUpPageState extends State<SignUpPage> {
         validateFields(firstName, lastName, email, password, confirmPassword);
     FocusManager.instance.primaryFocus.unfocus();
     if (result != SignUpResult.SUCCESS) {
-      print('oh no');
       showAlert(result);
       return false;
     } else {
@@ -206,15 +205,7 @@ class SignUpPageState extends State<SignUpPage> {
     return Scaffold(
         body: Stack(children: [
       Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(255, 255, 236, 210),
-                Color.fromARGB(255, 252, 182, 159)
-              ]),
-        ),
+        color: Theme.of(context).primaryColor,
       ),
       SingleChildScrollView(
           child: SafeArea(
@@ -238,8 +229,8 @@ class SignUpPageState extends State<SignUpPage> {
                 autovalidateMode: autoValidateMode,
                 child: Column(children: <Widget>[
                   Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
                     child: TextFormField(
                       // first name text field
                       textCapitalization: TextCapitalization.sentences,
@@ -262,16 +253,15 @@ class SignUpPageState extends State<SignUpPage> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                              color: Theme.of(context).accentColor, width: 2.0),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 10.0),
                   Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
                     child: TextFormField(
                       // last name text field
                       textCapitalization: TextCapitalization.sentences,
@@ -294,16 +284,15 @@ class SignUpPageState extends State<SignUpPage> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                              color: Theme.of(context).accentColor, width: 2.0),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 10.0),
                   Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
                     child: TextFormField(
                       // email text field
                       controller: emailController,
@@ -328,16 +317,15 @@ class SignUpPageState extends State<SignUpPage> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                              color: Theme.of(context).accentColor, width: 2.0),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 10.0),
                   Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
                     child: TextFormField(
                       // password text field
                       controller: passwordController,
@@ -362,8 +350,7 @@ class SignUpPageState extends State<SignUpPage> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                              color: Theme.of(context).accentColor, width: 2.0),
                         ),
                       ),
                       obscureText: true,
@@ -371,8 +358,8 @@ class SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 10.0),
                   Theme(
-                    data: Theme.of(context).copyWith(
-                        primaryColor: Color.fromARGB(255, 46, 25, 118)),
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
                     child: TextFormField(
                       // confirm password text field
                       controller: confirmPasswordController,
@@ -397,8 +384,7 @@ class SignUpPageState extends State<SignUpPage> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 46, 25, 118),
-                              width: 2.0),
+                              color: Theme.of(context).accentColor, width: 2.0),
                         ),
                       ),
                       obscureText: true,
@@ -420,7 +406,7 @@ class SignUpPageState extends State<SignUpPage> {
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              Color.fromARGB(255, 255, 154, 162)),
+                              Theme.of(context).accentColor),
                           elevation: MaterialStateProperty.all<double>(10.0),
                           shape: MaterialStateProperty.all<OutlinedBorder>(
                               RoundedRectangleBorder(
@@ -448,7 +434,8 @@ class SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 10.0),
             TextButton(
                 // button to navigate to sign up page TODO make it look pretty
-                child: Text("Already have an account? Sign in here"),
+                child: Text("Already have an account? Sign in here",
+                    style: TextStyle(fontSize: 15.0, color: Colors.black)),
                 onPressed: () {
                   Navigator.pop(this.context);
                 }),
