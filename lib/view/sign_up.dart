@@ -15,6 +15,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
+  final formKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -22,6 +23,8 @@ class SignUpPageState extends State<SignUpPage> {
   final confirmPasswordController = TextEditingController();
   final auth = AuthService(); // service to handle authentication
   final userService = UserService(); // service to handle firestore requests
+
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
 
   // validates an inputted string and returns true if the string is a valid email
   // returns false if the inputted string is not a valid email
@@ -182,7 +185,6 @@ class SignUpPageState extends State<SignUpPage> {
         validateFields(firstName, lastName, email, password, confirmPassword);
     FocusManager.instance.primaryFocus.unfocus();
     if (result != SignUpResult.SUCCESS) {
-      print('oh no');
       showAlert(result);
       return false;
     } else {
@@ -203,15 +205,7 @@ class SignUpPageState extends State<SignUpPage> {
     return Scaffold(
         body: Stack(children: [
       Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(255, 255, 236, 210),
-                Color.fromARGB(255, 252, 182, 159)
-              ]),
-        ),
+        color: Theme.of(context).primaryColor,
       ),
       SingleChildScrollView(
           child: SafeArea(
@@ -230,167 +224,218 @@ class SignUpPageState extends State<SignUpPage> {
                     fontFamily: 'Caveat'),
               ),
             ),
-            Column(children: <Widget>[
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField(
-                  // first name text field
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: firstNameController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(Icons.person),
-                    hintText: 'First Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 46, 25, 118), width: 2.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField(
-                  // last name text field
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: lastNameController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(Icons.person),
-                    hintText: 'Last Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 46, 25, 118), width: 2.0),
+            Form(
+                key: formKey,
+                autovalidateMode: autoValidateMode,
+                child: Column(children: <Widget>[
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
+                    child: TextFormField(
+                      // first name text field
+                      textCapitalization: TextCapitalization.sentences,
+                      controller: firstNameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'First name is required';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(Icons.person),
+                        hintText: 'First Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField(
-                  // email text field
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(Icons.email),
-                    hintText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 46, 25, 118), width: 2.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField(
-                  // password text field
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 46, 25, 118), width: 2.0),
+                  SizedBox(height: 10.0),
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
+                    child: TextFormField(
+                      // last name text field
+                      textCapitalization: TextCapitalization.sentences,
+                      controller: lastNameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Last name is required';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(Icons.person),
+                        hintText: 'Last Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
                     ),
                   ),
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(primaryColor: Color.fromARGB(255, 46, 25, 118)),
-                child: TextField(
-                  // confirm password text field
-                  controller: confirmPasswordController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: 'Confirm Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 46, 25, 118), width: 2.0),
-                    ),
-                  ),
-                  obscureText: true,
-                ),
-              ),
-            ]),
-            SizedBox(height: 30.0),
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: OutlinedButton(
-                  // sign up button
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
+                  SizedBox(height: 10.0),
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
+                    child: TextFormField(
+                      // email text field
+                      controller: emailController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Email is required';
+                        }
+                        if (!validateEmail(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(Icons.email),
+                        hintText: 'Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
                     ),
                   ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 255, 154, 162)),
-                    elevation: MaterialStateProperty.all<double>(10.0),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(25.0))),
+                  SizedBox(height: 10.0),
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
+                    child: TextFormField(
+                      // password text field
+                      controller: passwordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Password is required';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be 6 characters or longer';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(Icons.lock),
+                        hintText: 'Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
                   ),
-                  onPressed: () async {
-                    bool signUpSuccess = await signUp();
-                    if (signUpSuccess) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => HomePage()));
-                    }
-                  }),
-            ),
-            SizedBox(height: 40.0),
+                  SizedBox(height: 10.0),
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Theme.of(context).accentColor),
+                    child: TextFormField(
+                      // confirm password text field
+                      controller: confirmPasswordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Confirm password is required';
+                        }
+                        if (value != passwordController.text.trim()) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(Icons.lock),
+                        hintText: 'Confirm Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
+                  ),
+                  SizedBox(height: 15.0),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.0,
+                    child: OutlinedButton(
+                        // sign up button
+                        child: Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Theme.of(context).accentColor),
+                          elevation: MaterialStateProperty.all<double>(10.0),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(25.0))),
+                        ),
+                        onPressed: () async {
+                          if (formKey.currentState.validate()) {
+                            bool signUpSuccess = await signUp();
+                            if (signUpSuccess) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          HomePage()));
+                            }
+                          } else {
+                            setState(() {
+                              autoValidateMode = AutovalidateMode.always;
+                            });
+                          }
+                        }), // end of onPressed
+                  ),
+                ])),
+            SizedBox(height: 10.0),
             TextButton(
                 // button to navigate to sign up page TODO make it look pretty
-                child: Text("Already have an account? Sign in here"),
+                child: Text("Already have an account? Sign in here",
+                    style: TextStyle(fontSize: 15.0, color: Colors.black)),
                 onPressed: () {
                   Navigator.pop(this.context);
                 }),

@@ -1,15 +1,20 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:whats_the_tea/model/sign_in_result.dart';
 import 'package:whats_the_tea/model/sign_up_result.dart';
 import 'package:whats_the_tea/service/user_service.dart';
 import 'package:whats_the_tea/model/user.dart' as m;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path_provider/path_provider.dart';
 
 // class that handles authentication for sign in and login
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   final UserService userService = UserService();
+
+  final storage = firebase_storage.FirebaseStorage.instance;
 
   // signs the user in with email and password
   Future<SignInResult> signIn(String email, String password) async {
@@ -50,11 +55,15 @@ class AuthService {
         email: email,
         password: password,
       )
-          .then((value) {
+          .then((value) async {
         value.user.updateProfile(
             displayName:
                 firstName + ' ' + lastName); // set the user's name in auth
+
+        value.user.updateProfile(photoURL: await downloadURL());
         return;
+
+
       });
 
       // create a user
@@ -62,6 +71,7 @@ class AuthService {
         auth.currentUser.uid, // uid taken from auth
         firstName,
         lastName,
+        await downloadURL(), // TODO profile picture url goes here
         [], // empty list of friends
         [], // empty list of channels
         [],
@@ -90,6 +100,28 @@ class AuthService {
       print(e.message);
       return SignUpResult.FAIL;
     }
+  }
+
+  Future<void> uploadProfilePicture(String filePath, String uid) async {
+
+    File file = File(filePath);
+
+    firebase_storage.SettableMetadata metadata = firebase_storage.SettableMetadata(
+      customMetadata: <String, String> {
+        'uid': uid,
+      },
+      );
+
+      try {
+        await firebase_storage.FirebaseStorage.instance.ref('uploads/file-to-upload.png').putFile(file, metadata);
+      } on FirebaseException catch(e) {
+        print(e.message);
+      }
+  }
+  
+  Future<String> downloadURL() async {
+    String downloadURL = await storage.ref('profilePictures/kevin.the.shiba.jpg').getDownloadURL();
+    return downloadURL;
   }
 
   // signs the user out of the current session

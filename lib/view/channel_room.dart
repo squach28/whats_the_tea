@@ -48,71 +48,75 @@ class ChannelRoomState extends State<ChannelRoom> {
       body: SafeArea(
         child: Stack(
           children: [
-            StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('channels')
-                    .doc(widget.channel.channelID)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    List<dynamic> messagesData = snapshot.data['messages'];
-                    List<Message> messages = [];
-                    for (var messageJson in messagesData) {
-                      Message message = Message(
-                          messageJson['senderID'],
-                          messageJson['channelID'],
-                          messageJson['content'],
-                          messageJson['sentAt'].toDate());
-                      messages.add(message);
-                    }
-                    print(messages.length);
-                    return Padding(
-                        padding: EdgeInsets.only(top: 10.0),
-                        child: SingleChildScrollView(
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                controller: scrollController,
-                                itemCount: messages.length,
-                                itemBuilder: (context, index) {
-                                  messages.sort();
-                                  var message = messages.elementAt(index);
+            Container(
+              constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width, height: 520),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('channels')
+                      .doc(widget.channel.channelID)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      List<dynamic> messagesData = snapshot.data['messages'];
+                      List<Message> messages = [];
+                      for (var messageJson in messagesData) {
+                        Message message = Message(
+                            messageJson['senderID'],
+                            messageJson['channelID'],
+                            messageJson['content'],
+                            messageJson['sentAt'].toDate());
+                        messages.add(message);
+                      }
+                      print(messages.length);
+                      return Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: SingleChildScrollView(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  controller: scrollController,
+                                  itemCount: messages.length,
+                                  itemBuilder: (context, index) {
+                                    messages.sort();
+                                    var message = messages.elementAt(index);
 
-                                  return Container(
-                                      padding: EdgeInsets.only(
-                                          top: 2.0, left: 10.0, right: 10.0),
-                                      alignment: message.senderID ==
-                                              auth.currentUser.uid
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1.0,
-                                                color: message.senderID ==
-                                                        auth.currentUser.uid
-                                                    ? Theme.of(context)
-                                                        .primaryColor
-                                                    : Colors.grey[200]),
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            color: message.senderID ==
-                                                    auth.currentUser.uid
-                                                ? Theme.of(context).primaryColor
-                                                : Colors.grey[200],
-                                          ),
-                                          child: Padding(
-                                              padding: EdgeInsets.all(10.0),
-                                              child: Text(message.content,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 17.0,
-                                                  )))));
-                                })));
-                  }
-                }),
+                                    return Container(
+                                        padding: EdgeInsets.only(
+                                            top: 2.0, left: 10.0, right: 10.0),
+                                        alignment: message.senderID ==
+                                                auth.currentUser.uid
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 1.0,
+                                                  color: message.senderID ==
+                                                          auth.currentUser.uid
+                                                      ? Theme.of(context)
+                                                          .primaryColor
+                                                      : Colors.grey[200]),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              color: message.senderID ==
+                                                      auth.currentUser.uid
+                                                  ? Theme.of(context)
+                                                      .primaryColor
+                                                  : Colors.grey[200],
+                                            ),
+                                            child: Padding(
+                                                padding: EdgeInsets.all(10.0),
+                                                child: Text(message.content,
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 17.0,
+                                                    )))));
+                                  })));
+                    }
+                  }),
+            ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
@@ -156,7 +160,7 @@ class ChannelRoomState extends State<ChannelRoom> {
                         String message = messageController.text;
 
                         if (message.isEmpty) {
-                          // if nothing is written, do nothing
+                          // if nothing is written, return nothing
                           return;
                         }
                         print(widget.channel.channelID == null);
@@ -167,7 +171,6 @@ class ChannelRoomState extends State<ChannelRoom> {
                         print('message sent');
                         messageController
                             .clear(); // clear the text field when message is sent
-                            
                       },
                       child: Icon(Icons.send, color: Colors.white, size: 18),
                       backgroundColor: Theme.of(context).accentColor,

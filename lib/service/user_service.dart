@@ -1,14 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whats_the_tea/model/basic_user.dart';
 import 'package:whats_the_tea/model/channel.dart';
 import 'package:whats_the_tea/model/user.dart' as m;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserService {
   final FirebaseFirestore firestore =
       FirebaseFirestore.instance; // create instance of firestore
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final storage = FirebaseStorage.instance;
+  final picker = ImagePicker();
 
   // creates a user and stores it in firestore
   Future<void> createUserProfile(m.User user) {
@@ -49,22 +55,21 @@ class UserService {
       'friendRequests': FieldValue.arrayUnion([sender.toJson()])
     });
 
-    await users
-        .doc(auth.currentUser.uid)
-        .update({'friendRequestsSent': FieldValue.arrayUnion([recipient.toJson()])});
+    await users.doc(auth.currentUser.uid).update({
+      'friendRequestsSent': FieldValue.arrayUnion([recipient.toJson()])
+    });
   }
 
   // accepts a friend request
   // takes the user who sent the friend request as a param
   void acceptFriendRequest(BasicUserInfo friendRequest) async {
-
     BasicUserInfo currentUserInfo = await getUserInfo(auth.currentUser.uid);
     // remove the user from the list of friend requests
     await firestore.collection('users').doc(auth.currentUser.uid).update({
       'friendRequests': FieldValue.arrayRemove([friendRequest.toJson()])
     });
 
-        await firestore.collection('users').doc(friendRequest.uid).update({
+    await firestore.collection('users').doc(friendRequest.uid).update({
       'friendRequestsSent': FieldValue.arrayRemove([currentUserInfo.toJson()])
     });
 
@@ -110,7 +115,58 @@ class UserService {
     await firestore.collection('users').doc(uid).get().then((value) {
       lastName = value.data()['lastName'];
     });
+    String profilePictureURL = '';
+    await firestore.collection('users').doc(uid).get().then((value) {
+      profilePictureURL = value.data()['profilePictureURL'];
+    });
 
-    return BasicUserInfo(uid, firstName, lastName);
+    return BasicUserInfo(uid, firstName, lastName, profilePictureURL);
+  }
+
+  Future<String> getProfilePicture(String uid) async {
+    String profilePictureURL = '';
+    await firestore.collection('users').doc(uid).get().then((value) {
+      return value.data()['profilePictureURL'];
+    });
+  }
+
+  void updateProfilePicture(String uid, String downloadURL) async {
+    await firestore
+        .collection('users')
+        .doc(uid)
+        .update({'profilePictureURL': downloadURL});
+  }
+
+  void uploadImage() async {
+    PickedFile image;
+
+    await Permission.photos.request();
+    var permissionStatus = await Permission.photos.status;
+
+    if (permissionStatus.isGranted) {
+      image = await picker.getImage(source: ImageSource.gallery);
+
+      if (image == null) {
+        return;
+      }
+      var file = File(image.path);
+
+      if (image != null) {
+        var snapshot = await storage
+            .ref()
+            .child(
+                'profilePictures/' + auth.currentUser.uid + '/profilePicture')
+            .putFile(file);
+        String downloadURL = await storage
+            .ref()
+            .child(
+                'profilePictures/' + auth.currentUser.uid + '/profilePicture')
+            .getDownloadURL();
+        updateProfilePicture(auth.currentUser.uid, downloadURL);
+        auth.currentUser.updateProfile(
+          photoURL: downloadURL,
+        );
+      }
+    }
   }
 }

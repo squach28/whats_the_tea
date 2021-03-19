@@ -18,12 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color(0xffece6ff),
-        accentColor: const Color(0xff8060e6),
+        primaryColor: const Color(0xffbeffc7),//const Color(0xffece6ff),
+        accentColor: Colors.green,//const Color(0xff8060e6),
         fontFamily: 'OpenSans',
       ),
       home:
-          FirebaseAuth.instance.currentUser != null ? HomePage() : SignInPage(),
+        FirebaseAuth.instance.currentUser != null ? HomePage() : SignInPage(),
+
     );
   }
 }

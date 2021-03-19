@@ -29,7 +29,7 @@ class ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffece6ff),
+      backgroundColor: Colors.white70,
       body: SafeArea(
           minimum: EdgeInsets.only(left: 5.0, right: 5.0),
           child: Padding(
@@ -40,13 +40,15 @@ class ChatListPageState extends State<ChatListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      child: Text('Chats', style: TextStyle(fontSize: 50.0)), // chat header
+                      child: Text('Chats',
+                          style: TextStyle(fontSize: 50.0)), // chat header
                       padding: EdgeInsets.only(left: 10.0, top: 20.0),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 10.0, right: 10.0, bottom: 20.0),
-                      child: TextField( // search text field
+                      child: TextField(
+                        // search text field
                         decoration: InputDecoration(
                           fillColor: Colors.grey[100],
                           filled: true,
@@ -59,30 +61,39 @@ class ChatListPageState extends State<ChatListPage> {
                         ),
                       ),
                     ),
-                    StreamBuilder( // stream builder for loading users collection
+                    StreamBuilder(
+                        // stream builder for loading users collection
                         stream: FirebaseFirestore.instance
                             .collection('users')
                             .doc(auth.currentUser.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (!snapshot.hasData) { // no data --> show progress indicator
+                          if (!snapshot.hasData) {
+                            // no data --> show progress indicator
                             return Center(child: CircularProgressIndicator());
                           } else {
-                            List<dynamic> chats = snapshot.data['channels']; // list of all users
+                            List<dynamic> chats =
+                                snapshot.data['channels']; // list of all users
 
-                            return StreamBuilder( // stream builder for channels collection
+                            return StreamBuilder(
+                                // stream builder for channels collection
                                 stream: FirebaseFirestore.instance
                                     .collection('channels')
                                     .snapshots(),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData) { // no data --> show progress indicator
+                                  if (!snapshot.hasData) {
+                                    // no data --> show progress indicator
                                     return Center(
                                         child: CircularProgressIndicator());
                                   } else {
-                                    QuerySnapshot channels = snapshot.data; // list of all channels
-                                    Map<String, Channel> allChannels = {}; // map of all channels with key value pair {channelID: Channel}
-                                    Map<String, Channel> userChannels = {}; // map of user channels with key value pair {channelID: Channel}
-                                    
+                                    QuerySnapshot channels =
+                                        snapshot.data; // list of all channels
+                                    Map<String, Channel> allChannels =
+                                        {}; // map of all channels with key value pair {channelID: Channel}
+                                    Map<String, Channel> userChannels =
+                                        {}; // map of user channels with key value pair {channelID: Channel}
+
+                                    print('size: ' + channels.size.toString());
                                     for (var channel in channels.docs) {
                                       List<BasicUserInfo> participants = [];
                                       List<Message> messages = [];
@@ -93,8 +104,11 @@ class ChatListPageState extends State<ChatListPage> {
                                             BasicUserInfo(
                                                 participant['uid'],
                                                 participant['firstName'],
-                                                participant['lastName']);
-                                        participants.add(participantInfo); // add participant info to list of participants
+                                                participant['lastName'],
+                                                participant[
+                                                    'profilePictureURL']);
+                                        participants.add(
+                                            participantInfo); // add participant info to list of participants
                                       }
 
                                       // find the messages in each channel
@@ -105,38 +119,43 @@ class ChatListPageState extends State<ChatListPage> {
                                             message['channelID'],
                                             message['content'],
                                             message['sentAt'].toDate());
-                                        messages.add(messageInfo); // add message info to list of messages
+                                        messages.add(
+                                            messageInfo); // add message info to list of messages
                                       }
-
 
                                       // create channelInfo as channel object
                                       Channel channelInfo = Channel(
                                           channel.data()['channelID'],
                                           participants,
                                           messages);
-                                      allChannels[channel.data()['channelID']] = channelInfo;
+                                      allChannels[channel.data()['channelID']] =
+                                          channelInfo;
                                     }
                                     // fill userChannels with channel info if match is found
                                     for (var channelID in chats) {
-                                      userChannels[channelID] = allChannels[channelID];
+                                      userChannels[channelID] =
+                                          allChannels[channelID];
                                     }
                                     return ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: userChannels.length,
-                                      itemBuilder: (context, index) {
-                                        
-                                        Channel key = userChannels.values.elementAt(index);
-                                        if(key == null) {
-                                          return SizedBox(height:0, width: 0);
-                                        } else {
-                                          // chat list item with channel info included
-                                        return ChatListItem( 
-                                          channel: key
-                                        );
-                                      }
-                                      }
-                                    );
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: userChannels.length,
+                                        itemBuilder: (context, index) {
+                                          Channel key = userChannels.values
+                                              .elementAt(index);
+                                          print(key);
+                                          if (key == null) {
+                                            return SizedBox(
+                                                height: 0, width: 0);
+                                          } else {
+                                            // chat list item with channel info included
+                                            return Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 3.0, bottom: 3.0),
+                                                child:
+                                                    ChatListItem(channel: key));
+                                          }
+                                        });
                                   }
                                 });
                           }
@@ -145,22 +164,16 @@ class ChatListPageState extends State<ChatListPage> {
                 ),
               ))),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.green,
           child: Container(
             width: 60,
             height: 60,
             child: IconTheme(
-              data: IconThemeData(color: Colors.black),
+              data: IconThemeData(color: Colors.white),
               child: Icon(Icons.add),
             ),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xffa88beb),
-                    const Color(0xfff8ceec),
-                  ]),
             ),
           ),
           onPressed: () async {

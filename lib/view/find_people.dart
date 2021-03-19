@@ -79,7 +79,9 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                             BasicUserInfo(
                                                 friend['uid'],
                                                 friend['firstName'],
-                                                friend['lastName']);
+                                                friend['lastName'],
+                                                friend['profilePictureURL'],
+                                                );
                                         friends.add(friendInfo);
                                       }
 
@@ -89,7 +91,8 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                             BasicUserInfo(
                                                 friendRequest['uid'],
                                                 friendRequest['firstName'],
-                                                friendRequest['lastName']);
+                                                friendRequest['lastName'],
+                                                friendRequest['profilePictureURL']);
                                         friendRequests.add(friendRequestInfo);
                                       }
 
@@ -99,7 +102,8 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                             BasicUserInfo(
                                                 friendRequestSent['uid'],
                                                 friendRequestSent['firstName'],
-                                                friendRequestSent['lastName']);
+                                                friendRequestSent['lastName'],
+                                                friendRequestSent['profilePictureURL']);
                                         friendRequestsSent
                                             .add(friendRequestSentInfo);
                                       }
@@ -124,7 +128,8 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                                   BasicUserInfo(
                                                       ds.data()['uid'],
                                                       ds.data()['firstName'],
-                                                      ds.data()['lastName']);
+                                                      ds.data()['lastName'],
+                                                      ds.data()['profilePictureURL']);
 
                                               if (friends.contains(user)) {
                                                 friendStatus =
@@ -146,6 +151,7 @@ class FindPeoplePageState extends State<FindPeoplePage> {
                                                 ds.data()['uid'],
                                                 ds.data()['firstName'],
                                                 ds.data()['lastName'],
+                                                ds.data()['profilePictureURL'],
                                               );
 
                                               return UserListItem(

@@ -116,7 +116,8 @@ class FriendRequestItemState extends State<FriendRequestItem> {
                       BasicUserInfo friendRequest = BasicUserInfo(
                         widget.friendRequestInfo.uid,
                         widget.friendRequestInfo.firstName,
-                        widget.friendRequestInfo.lastName
+                        widget.friendRequestInfo.lastName,
+                        widget.friendRequestInfo.profilePictureURL,
                       );
                       userService.acceptFriendRequest(friendRequest);
                     }),

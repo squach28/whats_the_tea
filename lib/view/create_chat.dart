@@ -92,7 +92,8 @@ class CreateChatPageState extends State<CreateChatPage> {
                                   BasicUserInfo friendInfo = BasicUserInfo(
                                       friend['uid'],
                                       friend['firstName'],
-                                      friend['lastName']);
+                                      friend['lastName'],
+                                      friend['profilePictureURL']);
 
                                   this.friends.add(friendInfo);
                                   return GestureDetector(
